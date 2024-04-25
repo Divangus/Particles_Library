@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{dd8a5b9a-d35c-4293-ae25-9104722fa7c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{23377a55-9ddc-4add-8420-d96f76247eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{7004c66c-49f1-4711-b283-b12ac68125f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{901f0a0e-85e2-4c21-8d3e-65d5c935c4cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\imGui">
+      <UniqueIdentifier>{29096ca1-607f-46ba-bb92-38990c33a016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\imGui\backends">
+      <UniqueIdentifier>{df53b422-83f7-4b25-a7d5-cc03e42d79d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source Code\Application.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\ModuleCamera3D.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\ModuleGui.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\ModuleInput.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\ModuleRenderer3D.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\ModuleWindow.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Color.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\glmath.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Light.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\log.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Primitive.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Timer.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\imgui.cpp">
+      <Filter>External\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\imgui_demo.cpp">
+      <Filter>External\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\imgui_draw.cpp">
+      <Filter>External\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\imgui_tables.cpp">
+      <Filter>External\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\imgui_widgets.cpp">
+      <Filter>External\imGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3.cpp">
+      <Filter>External\imGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Externals\imGui\backends\imgui_impl_sdl.cpp">
+      <Filter>External\imGui\backends</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source Code\Application.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Globals.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\MemLeaks.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Module.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleCamera3D.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleGui.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleInput.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleRenderer3D.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleWindow.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Color.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\glmath.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Light.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\p2DynArray.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\p2List.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\p2Point.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Primitive.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Timer.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imconfig.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imgui.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imgui_internal.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imstb_rectpack.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imstb_textedit.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\imstb_truetype.h">
+      <Filter>External\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3.h">
+      <Filter>External\imGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>External\imGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_sdl.h">
+      <Filter>External\imGui\backends</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
