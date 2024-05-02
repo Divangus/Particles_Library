@@ -169,7 +169,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\PhysFS\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Source Code\Externals\DevIL\include;$(ProjectDir)Source Code\Externals\Glew\include;$(ProjectDir)Source Code\Externals\PhysFS\include;$(ProjectDir)Source Code\Externals\SDL\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\PhysFS\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Source Code\Externals\DevIL\include;$(ProjectDir)Source Code\Externals\Glew\include;$(ProjectDir)Source Code\Externals\PhysFS\include;$(ProjectDir)Source Code\Externals\SDL\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -177,7 +184,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source Code\Externals\Assimp\include;$(ProjectDir)Source Code\Externals\DevIL\include;$(ProjectDir)Source Code\Externals\Glew\include;$(ProjectDir)Source Code\Externals\imGui;$(ProjectDir)Source Code\Externals\imGui\backends;$(ProjectDir)Source Code\Externals\PhysFS\include;$(ProjectDir)Source Code\Externals\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source Code\Externals\imGui;$(ProjectDir)Source Code\Externals\imGui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -185,6 +192,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(ProjectDir)Source Code\Externals\Assimp\libx86;$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\PhysFS\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;glew32s.lib;physfs.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -196,7 +204,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source Code\Externals\Assimp\include;$(ProjectDir)Source Code\Externals\DevIL\include;$(ProjectDir)Source Code\Externals\Glew\include;$(ProjectDir)Source Code\Externals\imGui;$(ProjectDir)Source Code\Externals\imGui\backends;$(ProjectDir)Source Code\Externals\PhysFS\include;$(ProjectDir)Source Code\Externals\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source Code\Externals\imGui;$(ProjectDir)Source Code\Externals\imGui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -205,6 +213,7 @@
       <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <AdditionalLibraryDirectories>$(ProjectDir)Source Code\Externals\Assimp\libx86;$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\PhysFS\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;glew32s.lib;physfs.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
