@@ -4,7 +4,6 @@
 #include "ModuleWindow.h"
 
 #include "ModuleRenderer3D.h"
-#include "glew.h"
 #include "Primitive.h"
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -44,7 +43,6 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::Update(float dt)
 {
 
-	ImGui::ShowDemoWindow();
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Quit ESC")) {
@@ -66,20 +64,18 @@ update_status ModuleGui::Update(float dt)
 	}
 	if (about) {
 		if (ImGui::Begin("About")) {
-			ImGui::Text("MIST ENGINE ~ ~");
+			ImGui::Text("Particle Library ~ ~");
 			ImGui::Separator();
 			ImGui::NewLine();
-			ImGui::Text("A 3D Game Engine made by studients of CITM.");
-			ImGui::Text("By Marina Albala and David Benages");
+			ImGui::Text("A particle library made with OpenGL ");
+			ImGui::Text("By David Benages");
 			ImGui::NewLine();
 			ImGui::Text("3rd Partie Libraries:");
 			ImGui::BulletText("SDL 2.0");
 			ImGui::BulletText("ImGui 1.88");
 			ImGui::BulletText("Glew 2.1.0");
-			ImGui::BulletText("MathGeoLib 1.5");
 			ImGui::BulletText("OpenGL 3.1");
 			ImGui::BulletText("PhysFS");
-			ImGui::BulletText("Assimp");
 			ImGui::NewLine();
 			ImGui::Text("License:");
 			ImGui::NewLine();
@@ -90,17 +86,10 @@ update_status ModuleGui::Update(float dt)
 	if (config) {
 		if (ImGui::Begin("Configuration")) {
 			if (ImGui::CollapsingHeader("Application")) {
-				static char string[128] = "Mist Engine ~ ~";
+				static char string[128] = "Particle Library ~ ~";
 				ImGui::InputText("Engine Name", string, IM_ARRAYSIZE(string));
-				static char string2[128] = "CITM UPC";
-				ImGui::InputText("Organization", string2, IM_ARRAYSIZE(string2));
-				//Intento de Plotting
-				//char title[25];
-				//sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
-				//ImGui::PlotHistogram("##Framerate", &fps_log[0],fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100.0f));
-				/*float framerate[] = { xd };
-				ImGui::PlotHistogram("Framerate", framerate, IM_ARRAYSIZE(framerate), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
-			*/
+				static char string2[128] = "David Benages";
+				ImGui::InputText("Author", string2, IM_ARRAYSIZE(string2));
 			}
 			if (ImGui::CollapsingHeader("Window")) {
 				if (ImGui::Checkbox("Full Screen\t", &App->window->fullScreen)) {

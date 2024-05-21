@@ -4,6 +4,11 @@
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 )
 
+#include "glew.h"
+#include "SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
+
 #include <windows.h>
 #include <stdio.h>
 
@@ -29,11 +34,11 @@ enum update_status
 
 // Configuration -----------
 #define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 1024
+#define SCREEN_HEIGHT 720
 #define SCREEN_SIZE 1
 #define WIN_FULLSCREEN false
 #define WIN_RESIZABLE true
 #define WIN_BORDERLESS false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
-#define TITLE "3D Physics Playground"
+#define TITLE "Particle Library Demo"
