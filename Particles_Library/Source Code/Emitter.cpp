@@ -121,9 +121,9 @@ void Emitter::Render() {
 		ParticleList[i].SetTransformMatrix();
 
 
-		if (!text) {
+		/*if (!text) {
 			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
-		}
+		}*/
 
 		glPushMatrix();
 
