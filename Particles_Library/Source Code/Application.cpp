@@ -1,5 +1,16 @@
 #include "Application.h"
 
+extern Application* externalapp = nullptr;
+
+Application* Application::GetApp()
+{
+	if (externalapp == nullptr)
+	{
+		externalapp = new Application();
+	}
+	return externalapp;
+}
+
 Application::Application()
 {
 	window = new ModuleWindow(this);

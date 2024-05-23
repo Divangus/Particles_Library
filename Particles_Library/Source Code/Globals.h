@@ -8,7 +8,9 @@
 #include "SDL_opengl.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include "glmath.h"
 
+#include <vector>
 #include <windows.h>
 #include <stdio.h>
 
@@ -21,6 +23,8 @@ void log(const char file[], int line, const char* format, ...);
 #define DEGTORAD 0.0174532925199432957f
 #define RADTODEG 57.295779513082320876f
 #define HAVE_M_PI
+
+#define VERTICES 5
 
 
 typedef unsigned int uint;

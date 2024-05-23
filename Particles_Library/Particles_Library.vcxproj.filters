@@ -22,6 +22,9 @@
     <Filter Include="External\SDL">
       <UniqueIdentifier>{6580ef54-edff-4dd7-a14a-cb74e155cc4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Particles">
+      <UniqueIdentifier>{f114272c-a282-4f30-9e1e-52318ccc61f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source Code\Application.cpp">
@@ -83,6 +86,12 @@
     </ClCompile>
     <ClCompile Include="Source Code\Externals\imGui\backends\imgui_impl_sdl.cpp">
       <Filter>External\imGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Emitter.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Code\Random.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="Source Code\Externals\SDL\include\SDL_vulkan.h">
       <Filter>External\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Emitter.h">
+      <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\Random.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

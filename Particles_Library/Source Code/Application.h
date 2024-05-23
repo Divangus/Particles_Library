@@ -24,13 +24,16 @@ public:
 private:
 
 	Timer	ms_timer;
-	float	dt;
 	p2List<Module*> list_modules;
 
 public:
 
+	float	dt;
+
 	Application();
 	~Application();
+
+	static Application* GetApp();
 
 	bool Init();
 	update_status Update();
@@ -42,3 +45,5 @@ private:
 	void PrepareUpdate();
 	void FinishUpdate();
 };
+
+extern Application* externalapp;
