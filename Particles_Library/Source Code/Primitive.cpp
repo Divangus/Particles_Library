@@ -1,13 +1,12 @@
-
 #include "Globals.h"
-#include "glew.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
 #include "Primitive.h"
 
 
 // ------------------------------------------------------------
-Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+Primitive::Primitive() : transform(float4x4::identity), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+{}
+
+Primitive::Primitive(float4x4 _transform) : transform(_transform), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
 
 // ------------------------------------------------------------
@@ -20,7 +19,7 @@ PrimitiveTypes Primitive::GetType() const
 void Primitive::Render() const
 {
 	glPushMatrix();
-	glMultMatrixf(transform.M);
+	glMultMatrixf(transform.ptr());
 
 	if(axis == true)
 	{
@@ -80,158 +79,161 @@ void Primitive::InnerRender() const
 	glPointSize(1.0f);
 }
 
-// ------------------------------------------------------------
-void Primitive::SetPos(float x, float y, float z)
+void Primitive::Inspector()
 {
-	transform.translate(x, y, z);
 }
 
-// ------------------------------------------------------------
-void Primitive::SetRotation(float angle, const vec3 &u)
-{
-	transform.rotate(angle, u);
-}
-
-// ------------------------------------------------------------
-void Primitive::Scale(float x, float y, float z)
-{
-	transform.scale(x, y, z);
-}
 
 // CUBE ============================================
-Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
+CubeC::CubeC() : Primitive(), size(1.0f, 1.0f, 1.0f), pos(0, 0, 0)
 {
 	type = PrimitiveTypes::Primitive_Cube;
 }
 
-Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
+CubeC::CubeC(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ), pos(0, 0, 0)
 {
 	type = PrimitiveTypes::Primitive_Cube;
 }
 
-void Cube::InnerRender() const
+void CubeC::InnerRender() const
 {	
 	float sx = size.x * 0.5f;
 	float sy = size.y * 0.5f;
 	float sz = size.z * 0.5f;
 
+	glTranslatef(pos[0], pos[1], pos[2]);
 	glBegin(GL_QUADS);
 
-	glNormal3f(0.0f, 0.0f, 1.0f);
+	//glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-sx, -sy, sz);
 	glVertex3f( sx, -sy, sz);
 	glVertex3f( sx,  sy, sz);
 	glVertex3f(-sx,  sy, sz);
 
-	glNormal3f(0.0f, 0.0f, -1.0f);
+	//glNormal3f(0.0f, 0.0f, -1.0f);
 	glVertex3f( sx, -sy, -sz);
 	glVertex3f(-sx, -sy, -sz);
 	glVertex3f(-sx,  sy, -sz);
 	glVertex3f( sx,  sy, -sz);
 
-	glNormal3f(1.0f, 0.0f, 0.0f);
+	//glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(sx, -sy,  sz);
 	glVertex3f(sx, -sy, -sz);
 	glVertex3f(sx,  sy, -sz);
 	glVertex3f(sx,  sy,  sz);
 
-	glNormal3f(-1.0f, 0.0f, 0.0f);
+	//glNormal3f(-1.0f, 0.0f, 0.0f);
 	glVertex3f(-sx, -sy, -sz);
 	glVertex3f(-sx, -sy,  sz);
 	glVertex3f(-sx,  sy,  sz);
 	glVertex3f(-sx,  sy, -sz);
 
-	glNormal3f(0.0f, 1.0f, 0.0f);
+	//glNormal3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(-sx, sy,  sz);
 	glVertex3f( sx, sy,  sz);
 	glVertex3f( sx, sy, -sz);
 	glVertex3f(-sx, sy, -sz);
 
-	glNormal3f(0.0f, -1.0f, 0.0f);
+	//glNormal3f(0.0f, -1.0f, 0.0f);
 	glVertex3f(-sx, -sy, -sz);
 	glVertex3f( sx, -sy, -sz);
 	glVertex3f( sx, -sy,  sz);
 	glVertex3f(-sx, -sy,  sz);
 
+
 	glEnd();
+}
+
+void CubeC::Inspector()
+{
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Position", pos.ptr());
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Size", size.ptr());
 }
 
 // SPHERE ============================================
-Sphere::Sphere() : Primitive(), radius(1.0f)
+SphereC::SphereC() : Primitive(), radius(1.0f), pos(0, 0, 0)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 }
 
-Sphere::Sphere(float radius) : Primitive(), radius(radius)
+SphereC::SphereC(float3 _pos, float _radius) : Primitive(), radius(_radius), pos(_pos)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 }
 
-void Sphere::InnerRender() const
+void SphereC::InnerRender() const
 {
-	//glutSolidSphere(radius, 25, 25);
+	GLUquadric* glQ = gluNewQuadric();
+	glPushMatrix();
+	glTranslatef(pos[0], pos[1], pos[2]);
+	gluSphere(glQ, radius, 25, 25);
+	gluDeleteQuadric(glQ);
 }
 
+void SphereC::Inspector()
+{
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Position", pos.ptr());
+	ImGui::Text("");
+	ImGui::InputFloat("Radius", &radius);
+}
 
 // CYLINDER ============================================
-Cylinder::Cylinder() : Primitive(), radius(1.0f), height(1.0f)
+CylinderC::CylinderC() : Primitive(), radius(1.0f), pos(0, 0, 0), height(3.0f)
 {
 	type = PrimitiveTypes::Primitive_Cylinder;
 }
 
-Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
+CylinderC::CylinderC(float3 _pos, float _radius, float _height) : Primitive(), radius(_radius), pos(_pos), height(_height)
 {
 	type = PrimitiveTypes::Primitive_Cylinder;
 }
 
-void Cylinder::InnerRender() const
+void CylinderC::InnerRender() const
 {
-	int n = 30;
+	GLUquadric* glQ = gluNewQuadric();
+	glPushMatrix();
+	glTranslatef(pos[0], pos[1], pos[2]);
+	glRotatef(90, -1.0f, 0.0f, 0.0f);
+	gluCylinder(glQ, radius, radius, height, 30, 1);
+	glPushMatrix();
+	glTranslatef(0.0f, 0.0f, height);
+	gluDisk(glQ, 0.0f, radius, 30, 1);
+	glPopMatrix();
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	gluDisk(glQ, 0.0f, radius, 30, 1);
+	gluDeleteQuadric(glQ);
+}
 
-	// Cylinder Bottom
-	glBegin(GL_POLYGON);
-	
-	for(int i = 360; i >= 0; i -= (360 / n))
-	{
-		float a = i * M_PI / 180; // degrees to radians
-		glVertex3f(-height*0.5f, radius * cos(a), radius * sin(a));
-	}
-	glEnd();
-
-	// Cylinder Top
-	glBegin(GL_POLYGON);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	for(int i = 0; i <= 360; i += (360 / n))
-	{
-		float a = i * M_PI / 180; // degrees to radians
-		glVertex3f(height * 0.5f, radius * cos(a), radius * sin(a));
-	}
-	glEnd();
-
-	// Cylinder "Cover"
-	glBegin(GL_QUAD_STRIP);
-	for(int i = 0; i < 480; i += (360 / n))
-	{
-		float a = i * M_PI / 180; // degrees to radians
-
-		glVertex3f(height*0.5f,  radius * cos(a), radius * sin(a) );
-		glVertex3f(-height*0.5f, radius * cos(a), radius * sin(a) );
-	}
-	glEnd();
+void CylinderC::Inspector()
+{
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Position", pos.ptr());
+	ImGui::Text("");
+	ImGui::InputFloat("Radius", &radius);
+	ImGui::Text("");
+	ImGui::InputFloat("Height", &height);
 }
 
 // LINE ==================================================
-Line::Line() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
+LineC::LineC() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
 {
 	type = PrimitiveTypes::Primitive_Line;
 }
 
-Line::Line(float x, float y, float z) : Primitive(), origin(0, 0, 0), destination(x, y, z)
+LineC::LineC(float3 _destination) : Primitive(), origin(0, 0, 0), destination(_destination)
 {
 	type = PrimitiveTypes::Primitive_Line;
 }
 
-void Line::InnerRender() const
+LineC::LineC(float3 _origin, float3 _destination) : Primitive(), origin(_origin), destination(_destination)
+{
+	type = PrimitiveTypes::Primitive_Line;
+}
+
+void LineC::InnerRender() const
 {
 	glLineWidth(2.0f);
 
@@ -245,22 +247,32 @@ void Line::InnerRender() const
 	glLineWidth(1.0f);
 }
 
+void LineC::Inspector()
+{
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Origin", origin.ptr());
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Destination", destination.ptr());
+}
+
 // PLANE ==================================================
-Plane::Plane() : Primitive(), normal(0, 1, 0), constant(1)
+PlaneC::PlaneC() : Primitive(), normal(0, 1, 0), constant(1), pos(0, 0, 0)
 {
 	type = PrimitiveTypes::Primitive_Plane;
 }
 
-Plane::Plane(float x, float y, float z, float d) : Primitive(), normal(x, y, z), constant(d)
+PlaneC::PlaneC(float3 _normal, float d) : Primitive(), normal(_normal), constant(d), pos(0, 0, 0)
 {
 	type = PrimitiveTypes::Primitive_Plane;
 }
 
-void Plane::InnerRender() const
+void PlaneC::InnerRender() const
 {
 	glLineWidth(1.0f);
-
+	
 	glBegin(GL_LINES);
+
+	glTranslatef(pos[0], pos[1], pos[2]);
 
 	float d = 200.0f;
 
@@ -273,4 +285,15 @@ void Plane::InnerRender() const
 	}
 
 	glEnd();
+}
+
+void PlaneC::Inspector()
+{
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Position", pos.ptr());
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Normal", normal.ptr());
+	ImGui::Text("");
+	ImGui::InputFloat("Constant", &constant);
+
 }

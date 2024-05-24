@@ -4,7 +4,6 @@
 #include "ModuleWindow.h"
 
 #include "ModuleRenderer3D.h"
-#include "Primitive.h"
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {

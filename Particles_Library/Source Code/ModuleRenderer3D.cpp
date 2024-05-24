@@ -170,9 +170,11 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
-	Plane plano(0, 1, 0, 0);
-	plano.axis = true;
-	plano.Render();
+	//Plane plano(0, 1, 0, 0);
+	//plano.axis = true;
+	//plano.Render();
+	PlaneC plane(float3(0, 0, 0), 0);
+	plane.Render();
 
 	ImGui::Render();
 	glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
