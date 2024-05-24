@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "glmath.h"
 #include "ModuleRenderer3D.h"
 
 #include "imgui.h"
@@ -21,11 +20,6 @@ public:
 	bool CleanUp();
 
 	void PrintLicense();
-
-private:
-
-public:
-
 
 private:
 

@@ -1,13 +1,14 @@
 #pragma once
 #include "Globals.h"
+#include "MathGeoLib.h"
 
 struct ParticleProps
 {
-	vec3 pos, rot;
-	vec3 speed, speedVariation;
-	vec4 Color, endColor;
+	float3 pos, rot;
+	float3 speed, speedVariation;
+	float4 Color, endColor;
 
-	vec3 beginScale, endScale, scaleVariaton;
+	float3 beginScale, endScale, scaleVariaton;
 
 	bool texture = true;
 
@@ -16,23 +17,24 @@ struct ParticleProps
 
 struct Particle
 {
-	vec3 pos, rot, scale;
-	mat4x4 transformMat = IdentityMatrix;
-	vec3 speed;
-	vec4 Color, endColor;
+	float3 pos, rot, scale;
+	float4x4 transformMat = float4x4::identity;
+	float3 speed;
+	float4 Color, endColor;
 
-	vec3 beginScale, endScale;
+	float3 beginScale, endScale;
 
 	float LifeTime = 1.0f, LifeRemaining = 0.0f;
 
 	bool Active = false;
 
 	void SetTransformMatrix();
-	void SetTransform(mat4x4 matrix);
-	mat4x4 GetTransformMatrix();
+	void SetTransform(float4x4 matrix);
+	float4x4 GetTransformMatrix();
 };
 class Emitter
 {
+public:
 	Emitter();
 	~Emitter();
 
@@ -42,6 +44,7 @@ class Emitter
 
 	void ParticleBuffer();
 	void Render();
+	void Billboard(Particle& particle);
 
 	bool text = true;
 

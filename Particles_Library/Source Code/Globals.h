@@ -8,7 +8,6 @@
 #include "SDL_opengl.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
-//#include "glmath.h"
 
 #include <vector>
 #include <windows.h>

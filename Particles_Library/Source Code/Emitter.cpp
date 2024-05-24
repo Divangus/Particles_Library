@@ -115,19 +115,17 @@ void Emitter::Render() {
 			continue;
 
 
-		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;/*
+		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
 		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);*/
+		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
 		ParticleList[i].SetTransformMatrix();
 
-
-		/*if (!text) {
-			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
-		}*/
+		
+		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
 
 		glPushMatrix();
 
-		//glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
+		glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
@@ -142,28 +140,71 @@ void Emitter::Render() {
 
 }
 
-//void Particle::SetTransformMatrix()
-//{
-//	float x = rot.x * DEGTORAD;
-//	float y = rot.y * DEGTORAD;
-//	float z = rot.z * DEGTORAD;
-//
-//	Quat q = Quat::FromEulerXYZ(x, y, z);
-//
-//	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
-//}
-//
-//void Particle::SetTransform(mat4x4 matrix)
-//{
-//	Quat rotation;
-//	matrix.Decompose(pos, rotation, scale);
-//
-//	rot = rotation.ToEulerXYZ();
-//}
+void Particle::SetTransformMatrix()
+{
+	float x = rot.x * DEGTORAD;
+	float y = rot.y * DEGTORAD;
+	float z = rot.z * DEGTORAD;
 
-mat4x4 Particle::GetTransformMatrix()
+	Quat q = Quat::FromEulerXYZ(x, y, z);
+
+	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
+}
+
+void Particle::SetTransform(float4x4 matrix)
+{
+	Quat rotation;
+	matrix.Decompose(pos, rotation, scale);
+
+	rot = rotation.ToEulerXYZ();
+}
+
+float4x4 Particle::GetTransformMatrix()
 {
 	return transformMat;
+}
+
+void ParticleSystem::Billboard(Particle& particle) {
+
+	float3 right, up, look;
+	CCamera* cam;
+
+	if (Application::GetApp()->scene->sceneSelected) {
+		cam = Application::GetApp()->camera->sceneCam;
+	}
+	else {
+		cam = Application::GetApp()->renderer3D->mainCam;
+	}
+
+	look = float3(cam->FrustumCam.pos - particle.pos).Normalized();
+	up = cam->FrustumCam.up;
+	right = up.Cross(look);
+
+	float4x4 transform = float4x4::identity;
+	transform[0][0] = right.x * particle.scale.x;
+	transform[1][0] = right.y;
+	transform[2][0] = right.z;
+
+	transform[0][1] = up.x;
+	transform[1][1] = up.y * particle.scale.y;
+	transform[2][1] = up.z;
+
+	transform[0][2] = look.x;
+	transform[1][2] = look.y;
+	transform[2][2] = look.z * particle.scale.z;
+
+	transform[0][3] = particle.pos.x;
+	transform[1][3] = particle.pos.y;
+	transform[2][3] = particle.pos.z;
+
+	transform[3][0] = 0;
+	transform[3][1] = 0;
+	transform[3][2] = 0;
+	transform[3][3] = 1;
+
+	transform.Transpose();
+
+	particle.transformMat = transform;
 }
 
 

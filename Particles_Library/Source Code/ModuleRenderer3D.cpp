@@ -32,6 +32,9 @@ bool ModuleRenderer3D::Init()
 		LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
+
+	//Initialize Glew
+	glewInit();
 	
 	if(ret == true)
 	{
@@ -169,10 +172,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-
-	//Plane plano(0, 1, 0, 0);
-	//plano.axis = true;
-	//plano.Render();
 	PlaneC plane(float3(0, 0, 0), 0);
 	plane.Render();
 

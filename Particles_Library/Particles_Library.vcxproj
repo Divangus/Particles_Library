@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="Source Code\Application.cpp" />
     <ClCompile Include="Source Code\Color.cpp" />
+    <ClCompile Include="Source Code\Emitter.cpp" />
     <ClCompile Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Source Code\Externals\imGui\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="Source Code\Externals\imGui\imgui.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="Source Code\ModuleCamera3D.cpp" />
     <ClCompile Include="Source Code\ModuleGui.cpp" />
     <ClCompile Include="Source Code\ModuleInput.cpp" />
+    <ClCompile Include="Source Code\ModuleParticleSystem.cpp" />
     <ClCompile Include="Source Code\ModuleRenderer3D.cpp" />
     <ClCompile Include="Source Code\ModuleWindow.cpp" />
     <ClCompile Include="Source Code\Primitive.cpp" />
@@ -36,6 +38,7 @@
   <ItemGroup>
     <ClInclude Include="Source Code\Application.h" />
     <ClInclude Include="Source Code\Color.h" />
+    <ClInclude Include="Source Code\Emitter.h" />
     <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="Source Code\Externals\imGui\backends\imgui_impl_sdl.h" />
@@ -132,6 +135,7 @@
     <ClInclude Include="Source Code\ModuleCamera3D.h" />
     <ClInclude Include="Source Code\ModuleGui.h" />
     <ClInclude Include="Source Code\ModuleInput.h" />
+    <ClInclude Include="Source Code\ModuleParticleSystem.h" />
     <ClInclude Include="Source Code\ModuleRenderer3D.h" />
     <ClInclude Include="Source Code\ModuleWindow.h" />
     <ClInclude Include="Source Code\p2DynArray.h" />
