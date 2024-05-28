@@ -121,17 +121,15 @@ void Emitter::Render() {
 
 		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
 		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-		printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
-
-		//std::cout << ParticleList[i].scale << std::endl;
+		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
 
 		ParticleList[i].SetTransformMatrix();
 
 		Billboard(ParticleList[i]);
 
-		glPushMatrix();
-
 		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
+
+		glPushMatrix();
 
 		glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
 

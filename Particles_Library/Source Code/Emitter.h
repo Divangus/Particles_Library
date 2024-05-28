@@ -51,8 +51,6 @@ public:
 	std::vector<Particle> ParticleList;
 	uint32_t currentParticle = 999;
 
-	float4 printColor = float4::zero;
-
 	uint id_indices = 0;
 	uint id_vertices = 0;
 };

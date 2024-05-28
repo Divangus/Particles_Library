@@ -20,10 +20,11 @@ bool ModuleParticleSystem::Start()
 	particleProps.rot = float3::zero;
 	particleProps.beginScale = float3::one;
 	particleProps.endScale = float3::one;
+	particleProps.scaleVariaton = float3::one;
 	particleProps.speed = float3(0.0f, 1.0f, 0.0f);
 	particleProps.speedVariation = float3::one;
-	particleProps.Color = float4(255.0f, 0.0f, 0.0f, 1.0f); //r g b a
-	particleProps.endColor = float4(0.0f, 0.0f, 255.0f, 0.0f); //r g b a
+	particleProps.Color = float4(1.0f, 0.0f, 0.0f, 0.0f); //r g b a
+	particleProps.endColor = float4(0.0f, 0.0f, 1.0f, 1.0f); //r g b a
 
 	particleProps.LifeTime = 5.0f;
 
