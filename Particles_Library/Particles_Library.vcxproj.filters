@@ -51,9 +51,6 @@
     <ClCompile Include="Source Code\Color.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="Source Code\glmath.cpp">
-      <Filter>Tools</Filter>
-    </ClCompile>
     <ClCompile Include="Source Code\Light.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
@@ -93,6 +90,9 @@
     <ClCompile Include="Source Code\Random.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="Source Code\ModuleParticleSystem.cpp">
+      <Filter>Particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Code\Application.h">
@@ -123,9 +123,6 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source Code\Color.h">
-      <Filter>Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Source Code\glmath.h">
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="Source Code\Light.h">
@@ -415,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="Source Code\Random.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleParticleSystem.h">
+      <Filter>Particles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

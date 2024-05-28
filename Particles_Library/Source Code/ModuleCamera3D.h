@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "MathGeoLib.h"
 
 
 class ModuleCamera3D : public Module
@@ -13,25 +14,32 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
-	void LookAt(const vec3 &Spot);
-	void Move(const vec3 &Movement);
+	void Rotation();
+
+	void SetCam();
+	void GenBuffer();
+
 	float* GetViewMatrix();
-	//void PrintLicense();
+	float* GetProjectionMatrix();
 
-private:
-
-	void CalculateViewMatrix();
-	bool click = false;
-public:
+	void LookAt(const float3& target);
 	
-	vec3 X, Y, Z, Position, Reference;
+	float mouseSens = 0.50f;
+
+	Frustum FrustumCam;
+	float4x4 viewMatrix;
+	float4x4 projectionMatrix;
+
+	int FOV = 60.0f;
+
+	unsigned int cameraBuffer;
+	unsigned int frameBuffer;
+
+	float3 target;
 
 private:
 
-	mat4x4 ViewMatrix, ViewMatrixInverse;
-	/*bool config = true, about = false;
-	int width = SCREEN_WIDTH * SCREEN_SIZE;
-	int height = SCREEN_HEIGHT * SCREEN_SIZE;*/
+	bool click = false;
+	unsigned int renderObjBuffer;
 
 };

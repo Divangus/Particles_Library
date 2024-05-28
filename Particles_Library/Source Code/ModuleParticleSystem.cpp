@@ -19,13 +19,13 @@ bool ModuleParticleSystem::Start()
 	particleProps.pos = float3::zero;
 	particleProps.rot = float3::zero;
 	particleProps.beginScale = float3::one;
-	particleProps.endScale = float3::zero;
+	particleProps.endScale = float3::one;
 	particleProps.speed = float3(0.0f, 1.0f, 0.0f);
 	particleProps.speedVariation = float3::one;
-	particleProps.Color = float4(255.0f, 255.0f, 255.0f, 1.0f); //r g b a
-	particleProps.endColor = float4(0.0f, 0.0f, 0.0f, 0.0f); //r g b a
+	particleProps.Color = float4(255.0f, 0.0f, 0.0f, 1.0f); //r g b a
+	particleProps.endColor = float4(0.0f, 0.0f, 255.0f, 0.0f); //r g b a
 
-	particleProps.LifeTime = 1.0f;
+	particleProps.LifeTime = 5.0f;
 
 	emitter.ParticleBuffer();
 
@@ -36,16 +36,20 @@ update_status ModuleParticleSystem::Update(float dt)
 {
 	emitter.Emit(particleProps);
 
-	emitter.Update();
+	emitter.Update(dt);
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleParticleSystem::PostUpdate(float dt)
 {
-	emitter.Render();
 
 	return UPDATE_CONTINUE;
+}
+
+void ModuleParticleSystem::RenderParticles()
+{
+	emitter.Render();
 }
 
 // -----------------------------------------------------------------

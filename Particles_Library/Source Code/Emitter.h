@@ -10,7 +10,7 @@ struct ParticleProps
 
 	float3 beginScale, endScale, scaleVariaton;
 
-	bool texture = true;
+	//bool texture = true;
 
 	float LifeTime = 1.0f;
 };
@@ -24,7 +24,7 @@ struct Particle
 
 	float3 beginScale, endScale;
 
-	float LifeTime = 1.0f, LifeRemaining = 0.0f;
+	float LifeTime = 1.0f, LifeRemaining = 1.0f;
 
 	bool Active = false;
 
@@ -38,7 +38,7 @@ public:
 	Emitter();
 	~Emitter();
 
-	void Update();
+	void Update(float dt);
 
 	void Emit(ParticleProps& particleProps);
 
@@ -46,10 +46,12 @@ public:
 	void Render();
 	void Billboard(Particle& particle);
 
-	bool text = true;
+	//bool text = true;
 
 	std::vector<Particle> ParticleList;
 	uint32_t currentParticle = 999;
+
+	float4 printColor = float4::zero;
 
 	uint id_indices = 0;
 	uint id_vertices = 0;

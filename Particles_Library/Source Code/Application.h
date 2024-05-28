@@ -1,5 +1,5 @@
 #pragma once
-
+#define _CRTDBG_MAP_ALLOC
 #include "p2List.h"
 #include "Globals.h"
 #include "Timer.h"

@@ -15,6 +15,8 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	void RenderParticles();
+
 	ParticleProps particleProps;
 	Emitter emitter;
 };

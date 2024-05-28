@@ -6,15 +6,7 @@
 #include "ModuleInput.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
-{
-	CalculateViewMatrix();
-
-	X = vec3(1.0f, 0.0f, 0.0f);
-	Y = vec3(0.0f, 1.0f, 0.0f);
-	Z = vec3(0.0f, 0.0f, 1.0f);
-
-	Position = vec3(5.0f, 1.0f, 5.0f);
-	Reference = vec3(0.0f, 0.0f, 0.0f);
+{	
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -25,6 +17,10 @@ bool ModuleCamera3D::Start()
 {
 	LOG("Setting up the camera");
 	bool ret = true;
+	target = float3::zero;
+
+	SetCam();
+	GenBuffer();
 
 	return ret;
 }
@@ -40,149 +36,164 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	int wheel = -App->input->GetMouseZ();
+	float speed = 8.0f * dt;
 
-	
-	
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		speed = 8.0f * 2 * dt;
 
-	vec3 newPos(0,0,0);
-	float speed = 3.0f * dt;
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed = 8.0f * dt;
+	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) FrustumCam.pos.y += speed;
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) FrustumCam.pos.y -= speed;
 
-	/*if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-	if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
-
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) FrustumCam.pos += FrustumCam.front * speed;
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) FrustumCam.pos -= FrustumCam.front * speed;
 
 
-	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
-	if(App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;*/
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) FrustumCam.pos -= FrustumCam.WorldRight() * speed;
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) FrustumCam.pos += FrustumCam.WorldRight() * speed;
 
-	Position += newPos;
-	Reference += newPos;
-
-	
-	
-	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 	{
-		click = true;
-		int dx = -App->input->GetMouseXMotion();
-		int dy = -App->input->GetMouseYMotion();
+			LookAt(target);
 
-		float Sensitivity = 0.25f;
+			float TargetDist = FrustumCam.pos.Distance(target);
 
-		Position -= Reference;
+			Rotation();
 
-		if(dx != 0)
-		{
-			float DeltaX = (float)dx * Sensitivity;
-
-			X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		}
-
-		if(dy != 0)
-		{
-			float DeltaY = (float)dy * Sensitivity;
-
-			Y = rotate(Y, DeltaY, X);
-			Z = rotate(Z, DeltaY, X);
-
-			if(Y.y < 0.0f)
-			{
-				Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-				Y = cross(Z, X);
-			}
-		}
-
-		Position = Reference + Z * length(Position);
+			FrustumCam.pos = target + (FrustumCam.front * -TargetDist);
 	}
-	
-	// Recalculate matrix -------------
-	CalculateViewMatrix();
+
+	/*if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+	{
+		if (App->hierarchy->objSelected != nullptr) {
+			float3 target = App->hierarchy->objSelected->transform->position;
+			sceneCam->LookAt(target);
+
+			float TargetDist = sceneCam->FrustumCam.pos.Distance(target);
+
+			Rotation();
+
+			sceneCam->FrustumCam.pos = target + (sceneCam->FrustumCam.front * -TargetDist);
+		}
+	}*/
+
+	/*if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+	{
+		if (App->hierarchy->objSelected != nullptr) {
+			float3 target = App->hierarchy->objSelected->transform->position;
+
+			sceneCam->LookAt(target);
+		}
+	}*/
+
+	if (wheel != 0) FrustumCam.pos += FrustumCam.front * 10 * -wheel;
+
 
 	return UPDATE_CONTINUE;
 }
 
-// -----------------------------------------------------------------
-void ModuleCamera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
+void ModuleCamera3D::Rotation()
 {
-	this->Position = Position;
-	this->Reference = Reference;
+	int dx = -App->input->GetMouseXMotion();
+	int dy = -App->input->GetMouseYMotion();
 
-	Z = normalize(Position - Reference);
-	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	Y = cross(Z, X);	
+	Quat dir;
+	FrustumCam.WorldMatrix().Decompose(float3(), dir, float3());
 
-	if(!RotateAroundReference)
-	{
-		this->Reference = this->Position;
-		this->Position += Z * 0.05f;
+	if (dy != 0) {
+		float DeltaY = (float)dy * mouseSens;
+
+		Quat Y = Quat::identity;
+		Y.SetFromAxisAngle(float3(1.0f, 0.0f, 0.0f), DeltaY * DEGTORAD);
+
+		dir = dir * Y;
 	}
 
-	CalculateViewMatrix();
+	if (dx != 0) {
+		float DeltaX = (float)dx * mouseSens;
+
+		Quat X = Quat::identity;
+		X.SetFromAxisAngle(float3(0.0f, 1.0f, 0.0f), DeltaX * DEGTORAD);
+
+		dir = X * dir;
+	}
+
+	float4x4 matrix = FrustumCam.WorldMatrix();
+	matrix.SetRotatePart(dir.Normalized());
+	FrustumCam.SetWorldMatrix(matrix.Float3x4Part());
 }
 
-// -----------------------------------------------------------------
-void ModuleCamera3D::LookAt( const vec3 &Spot)
+void ModuleCamera3D::SetCam()
 {
-	Reference = Spot;
+	FrustumCam.type = FrustumType::PerspectiveFrustum;
+	FrustumCam.nearPlaneDistance = 0.1f;
+	FrustumCam.farPlaneDistance = 500.f;
+	FrustumCam.front = float3::unitZ;
+	FrustumCam.up = float3::unitY;
 
-	Z = normalize(Position - Reference);
-	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	Y = cross(Z, X);
+	FrustumCam.verticalFov = FOV * DEGTORAD;
+	FrustumCam.horizontalFov = 2.0f * atanf(tanf(FrustumCam.verticalFov / 2.0f) * 1.7f);
 
-	CalculateViewMatrix();
+	FrustumCam.pos = float3(0, 2, 10);
+	LookAt(target);
 }
 
-
-// -----------------------------------------------------------------
-void ModuleCamera3D::Move(const vec3 &Movement)
+void ModuleCamera3D::GenBuffer()
 {
-	Position += Movement;
-	Reference += Movement;
+	glGenFramebuffers(1, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	CalculateViewMatrix();
+	glGenTextures(1, &cameraBuffer);
+	glBindTexture(GL_TEXTURE_2D, cameraBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	float color[4] = { 0.1,0.1,0.1,0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cameraBuffer, 0);
+
+	glGenRenderbuffers(1, &renderObjBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderObjBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderObjBuffer);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		LOG("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-// -----------------------------------------------------------------
 float* ModuleCamera3D::GetViewMatrix()
 {
-	return &ViewMatrix;
+
+	viewMatrix = FrustumCam.ViewMatrix();
+
+	viewMatrix.Transpose();
+
+	return viewMatrix.ptr();
 }
 
-// -----------------------------------------------------------------
-void ModuleCamera3D::CalculateViewMatrix()
+float* ModuleCamera3D::GetProjectionMatrix()
 {
-	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, Position), -dot(Y, Position), -dot(Z, Position), 1.0f);
-	ViewMatrixInverse = inverse(ViewMatrix);
+
+	projectionMatrix = FrustumCam.ProjectionMatrix();
+
+	projectionMatrix.Transpose();
+
+	return projectionMatrix.ptr();
 }
 
-//void ModuleCamera3D::PrintLicense() {
-//
-//	ImGui::Text("MIT License");
-//	ImGui::NewLine();
-//	ImGui::Text("Copyright(c) 2022 Marina Albala & David Benages");
-//	ImGui::NewLine();
-//	ImGui::Text("Permission is hereby granted, free of charge, to any person obtaining a copy");
-//	ImGui::Text("of this softwareand associated documentation files(the 'Software'), to deal");
-//	ImGui::Text("in the Software without restriction, including without limitation the rights");
-//	ImGui::Text("to use, copy, modify, merge, publish, distribute, sublicense, and /or sell");
-//	ImGui::Text("copies of the Software, and to permit persons to whom the Software is");
-//	ImGui::Text("furnished to do so, subject to the following conditions :");
-//	ImGui::NewLine();
-//	ImGui::Text("The above copyright noticeand this permission notice shall be included in all");
-//	ImGui::Text("copies or substantial portions of the Software.");
-//	ImGui::NewLine();
-//	ImGui::Text("THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
-//	ImGui::Text("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
-//	ImGui::Text("FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE");
-//	ImGui::Text("AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER");
-//	ImGui::Text("LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,");
-//	ImGui::Text("OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE");
-//	ImGui::Text("SOFTWARE.");
-//}
+void ModuleCamera3D::LookAt(const float3& target)
+{
+	FrustumCam.front = (target - FrustumCam.pos).Normalized();
+	float3 X = float3(0, 1, 0).Cross(FrustumCam.front).Normalized();
+	FrustumCam.up = FrustumCam.front.Cross(X);
+}
+

@@ -2,9 +2,13 @@
 #include "Application.h"
 #include "Random.h"
 
+#include <iostream>
+
 Emitter::Emitter() {
 
 	ParticleList.resize(1000);
+
+	currentParticle = ParticleList.size() - 1;
 }
 
 Emitter::~Emitter()
@@ -12,7 +16,7 @@ Emitter::~Emitter()
 
 }
 
-void Emitter::Update() {
+void Emitter::Update(float dt) {
 
 	for (int i = 0; i < ParticleList.size(); i++)
 	{
@@ -25,15 +29,17 @@ void Emitter::Update() {
 			continue;
 		}
 
-		ParticleList[i].LifeRemaining -= Application::GetApp()->dt;
-		ParticleList[i].pos += ParticleList[i].speed * Application::GetApp()->dt;
+		ParticleList[i].LifeRemaining -= dt;
+		ParticleList[i].pos += ParticleList[i].speed * dt;
 		ParticleList[i].SetTransformMatrix();
+
+		//if(i == 1) std::cout << ParticleList[i].LifeRemaining << std::endl;
 	}
 }
 
 void Emitter::Emit(ParticleProps& particleProps)
 {
-	if (currentParticle < 0)
+	if (currentParticle <= 0)
 	{
 		currentParticle = ParticleList.size() - 1;
 	}
@@ -44,7 +50,7 @@ void Emitter::Emit(ParticleProps& particleProps)
 	particle.beginScale = particleProps.beginScale + particleProps.scaleVariaton * (Random::RandomFloat() - 0.5f); //Random number between -0.5 / 0.5
 	particle.endScale = particleProps.endScale;
 
-	text = particleProps.texture;
+	//text = particleProps.texture;
 	// Velocity
 	particle.speed = particleProps.speed;
 	particle.speed.x += particleProps.speedVariation.x * (Random::RandomFloat() - 0.5f);
@@ -117,13 +123,16 @@ void Emitter::Render() {
 
 		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
 		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
+		printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
+
 		ParticleList[i].SetTransformMatrix();
 
-		
-		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
+		Billboard(ParticleList[i]);
+
 
 		glPushMatrix();
+
+		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
 
 		glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
 
@@ -149,6 +158,7 @@ void Particle::SetTransformMatrix()
 	Quat q = Quat::FromEulerXYZ(x, y, z);
 
 	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
+
 }
 
 void Particle::SetTransform(float4x4 matrix)
@@ -164,20 +174,12 @@ float4x4 Particle::GetTransformMatrix()
 	return transformMat;
 }
 
-void ParticleSystem::Billboard(Particle& particle) {
+void Emitter::Billboard(Particle& particle) {
 
 	float3 right, up, look;
-	CCamera* cam;
 
-	if (Application::GetApp()->scene->sceneSelected) {
-		cam = Application::GetApp()->camera->sceneCam;
-	}
-	else {
-		cam = Application::GetApp()->renderer3D->mainCam;
-	}
-
-	look = float3(cam->FrustumCam.pos - particle.pos).Normalized();
-	up = cam->FrustumCam.up;
+	look = float3(Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
+	up = Application::GetApp()->camera->FrustumCam.up;
 	right = up.Cross(look);
 
 	float4x4 transform = float4x4::identity;
@@ -206,5 +208,4 @@ void ParticleSystem::Billboard(Particle& particle) {
 
 	particle.transformMat = transform;
 }
-
 

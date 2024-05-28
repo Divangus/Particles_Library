@@ -34,6 +34,8 @@ Application::Application()
 
 	// Renderer last!
 	AddModule(renderer3D);
+
+	externalapp = this;
 }
 
 Application::~Application()

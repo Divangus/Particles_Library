@@ -103,7 +103,7 @@ bool ModuleRenderer3D::Init()
 	}
 
 	// Projection matrix for
-	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	//OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	
 
@@ -147,16 +147,27 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glLoadMatrixf(App->camera->GetProjectionMatrix());
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glLoadMatrixf(App->camera->GetViewMatrix());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+	/*PlaneC plane(float3(0, 0, 0), 0);
+	plane.Render();
+
+	App->particleSystem->RenderParticles();*/
 
 	// light 0 on cam pos
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-	
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
-		
+	lights[0].SetPos(App->camera->FrustumCam.pos.x, App->camera->FrustumCam.pos.y, App->camera->FrustumCam.pos.z);
+
+	for (uint i = 0; i < MAX_LIGHTS; ++i)
+
 		lights[i].Render();
 
 	//ImGui
@@ -172,8 +183,11 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+
 	PlaneC plane(float3(0, 0, 0), 0);
 	plane.Render();
+
+	App->particleSystem->RenderParticles();	
 
 	ImGui::Render();
 	glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
@@ -205,8 +219,7 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	glLoadMatrixf(&ProjectionMatrix);
+	glLoadMatrixf(App->camera->FrustumCam.ProjectionMatrix().ptr());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
