@@ -27,19 +27,19 @@ public:
 	float mouseSens = 0.50f;
 
 	Frustum FrustumCam;
-	float4x4 viewMatrix;
-	float4x4 projectionMatrix;
+	float4x4 viewMatrix = float4x4::identity;
+	float4x4 projectionMatrix = float4x4::identity;
 
 	int FOV = 60.0f;
 
-	unsigned int cameraBuffer;
-	unsigned int frameBuffer;
+	unsigned int cameraBuffer = 0;
+	unsigned int frameBuffer = 0;
 
 	float3 target;
 
 private:
 
 	bool click = false;
-	unsigned int renderObjBuffer;
+	unsigned int renderObjBuffer = 0;
 
 };

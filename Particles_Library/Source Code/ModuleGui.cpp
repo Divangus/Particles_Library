@@ -1,7 +1,7 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleGui.h"
 #include "ModuleWindow.h"
+#include "MemLeaks.h"
 
 #include "ModuleRenderer3D.h"
 
@@ -42,7 +42,7 @@ update_status ModuleGui::PreUpdate(float dt)
 update_status ModuleGui::Update(float dt)
 {
 
-	if (ImGui::BeginMainMenuBar()) {
+	if (ImGui::BeginMainMenuBar()) { //Bar--------------------------
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("Quit ESC")) {
 				ImGui::EndMenu();
@@ -61,7 +61,7 @@ update_status ModuleGui::Update(float dt)
 		}
 		ImGui::EndMainMenuBar();
 	}
-	if (about) {
+	if (about) { //------------------------------------------------------- ABOUT WINDOW --------------
 		if (ImGui::Begin("About")) {
 			ImGui::Text("Particle Library ~ ~");
 			ImGui::Separator();
@@ -82,7 +82,7 @@ update_status ModuleGui::Update(float dt)
 		}
 		ImGui::End();
 	}
-	if (config) {
+	if (config) { //------------------------------------------------------- CONFIG WINDOW -------------
 		if (ImGui::Begin("Configuration")) {
 			if (ImGui::CollapsingHeader("Application")) {
 				static char string[128] = "Particle Library ~ ~";
@@ -160,7 +160,7 @@ void ModuleGui::PrintLicense() {
 
 	ImGui::Text("MIT License");
 	ImGui::NewLine();
-	ImGui::Text("Copyright(c) 2022 Marina Albala & David Benages");
+	ImGui::Text("Copyright(c) 2024 & David Benages");
 	ImGui::NewLine();
 	ImGui::Text("Permission is hereby granted, free of charge, to any person obtaining a copy");
 	ImGui::Text("of this softwareand associated documentation files(the 'Software'), to deal");

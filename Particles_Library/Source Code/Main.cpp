@@ -3,9 +3,7 @@
 #include "MemLeaks.h"
 #include "Globals.h"
 
-#include "SDL.h"/*
-#pragma comment( lib, "SDL/libx86/SDL2.lib" )
-#pragma comment( lib, "SDL/libx86/SDL2main.lib" )*/
+#include "SDL.h"
 
 enum main_states
 {
@@ -86,6 +84,8 @@ int main(int argc, char ** argv)
 
 	delete App;
 	LOG("Exiting app '%s'...\n", TITLE);
+	
+	
 
 	ReportMemoryLeaks();
 

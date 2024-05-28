@@ -1,6 +1,6 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleParticleSystem.h"
+#include "MemLeaks.h"
 
 ModuleParticleSystem::ModuleParticleSystem(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -34,6 +34,8 @@ bool ModuleParticleSystem::Start()
 
 update_status ModuleParticleSystem::Update(float dt)
 {
+	//Emit particles and update them
+
 	emitter.Emit(particleProps);
 
 	emitter.Update(dt);

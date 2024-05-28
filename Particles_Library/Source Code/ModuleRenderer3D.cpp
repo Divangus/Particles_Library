@@ -1,8 +1,8 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "Primitive.h"
 #include "ModuleGui.h"
+#include "MemLeaks.h"
 
 #include <stdio.h>      /* printf, scanf, puts, NULL */
 #include <stdlib.h>     /* srand, rand */
@@ -102,22 +102,11 @@ bool ModuleRenderer3D::Init()
 		glEnable(GL_COLOR_MATERIAL);
 	}
 
-	// Projection matrix for
-	//OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	
-
-	//srand(time(NULL));
-	
-	//
 	//IMGUI
-
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	io = &ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -126,9 +115,6 @@ bool ModuleRenderer3D::Init()
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, context);
 	ImGui_ImplOpenGL3_Init("#version 130");
-	//
-	//
-	//
 
 	return ret;
 }
@@ -136,16 +122,6 @@ bool ModuleRenderer3D::Init()
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-
-	float uwu = rand() % 254;
-	float owo = rand() % 254;
-	float umu = rand() % 254;
-	//int uwu=0;
-	//GLfloat LightModelAmbient[] = { uwu/255, owo/255, umu/255, 1.0f };
-	//glClearColor(uwu / 255, owo / 255, umu / 255, 0.8f);
-	//glClearColor(37, 54, 69, 1.0f);
-	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -158,11 +134,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	/*PlaneC plane(float3(0, 0, 0), 0);
-	plane.Render();
-
-	App->particleSystem->RenderParticles();*/
-
 	// light 0 on cam pos
 	lights[0].SetPos(App->camera->FrustumCam.pos.x, App->camera->FrustumCam.pos.y, App->camera->FrustumCam.pos.z);
 
@@ -171,11 +142,9 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 		lights[i].Render();
 
 	//ImGui
-
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
-
 
 	return UPDATE_CONTINUE;
 }
@@ -183,7 +152,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-
 	PlaneC plane(float3(0, 0, 0), 0);
 	plane.Render();
 

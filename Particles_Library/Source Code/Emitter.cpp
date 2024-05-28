@@ -1,6 +1,7 @@
 #include "Emitter.h"
 #include "Application.h"
 #include "Random.h"
+#include "MemLeaks.h"
 
 #include <iostream>
 
@@ -32,8 +33,6 @@ void Emitter::Update(float dt) {
 		ParticleList[i].LifeRemaining -= dt;
 		ParticleList[i].pos += ParticleList[i].speed * dt;
 		ParticleList[i].SetTransformMatrix();
-
-		//if(i == 1) std::cout << ParticleList[i].LifeRemaining << std::endl;
 	}
 }
 
@@ -111,7 +110,6 @@ void Emitter::Render() {
 	glTexCoordPointer(2, GL_FLOAT, sizeof(float) * VERTICES, (void*)(sizeof(float) * 3));
 	//bind and use other buffers
 
-
 	//Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
 
@@ -125,10 +123,11 @@ void Emitter::Render() {
 		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
 		printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
 
+		//std::cout << ParticleList[i].scale << std::endl;
+
 		ParticleList[i].SetTransformMatrix();
 
 		Billboard(ParticleList[i]);
-
 
 		glPushMatrix();
 
@@ -142,36 +141,12 @@ void Emitter::Render() {
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
+
 	//cleaning texture
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_COORD_ARRAY);
 
-}
-
-void Particle::SetTransformMatrix()
-{
-	float x = rot.x * DEGTORAD;
-	float y = rot.y * DEGTORAD;
-	float z = rot.z * DEGTORAD;
-
-	Quat q = Quat::FromEulerXYZ(x, y, z);
-
-	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
-
-}
-
-void Particle::SetTransform(float4x4 matrix)
-{
-	Quat rotation;
-	matrix.Decompose(pos, rotation, scale);
-
-	rot = rotation.ToEulerXYZ();
-}
-
-float4x4 Particle::GetTransformMatrix()
-{
-	return transformMat;
 }
 
 void Emitter::Billboard(Particle& particle) {
@@ -207,5 +182,30 @@ void Emitter::Billboard(Particle& particle) {
 	transform.Transpose();
 
 	particle.transformMat = transform;
+}
+
+void Particle::SetTransformMatrix()
+{
+	float x = rot.x * DEGTORAD;
+	float y = rot.y * DEGTORAD;
+	float z = rot.z * DEGTORAD;
+
+	Quat q = Quat::FromEulerXYZ(x, y, z);
+
+	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
+
+}
+
+void Particle::SetTransform(float4x4 matrix)
+{
+	Quat rotation;
+	matrix.Decompose(pos, rotation, scale);
+
+	rot = rotation.ToEulerXYZ();
+}
+
+float4x4 Particle::GetTransformMatrix()
+{
+	return transformMat;
 }
 

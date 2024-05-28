@@ -34,7 +34,7 @@ public:
 		 resizable = true, 
 		 borderless = false, 
 		 desktop = false;
-	int screenType;
+	int screenType = 0;
 };
 
 #endif // __ModuleWindow_H__

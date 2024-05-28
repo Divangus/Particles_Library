@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "ModuleRenderer3D.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_sdl.h"

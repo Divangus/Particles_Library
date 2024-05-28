@@ -3,8 +3,6 @@
 #include "Globals.h"
 #include "Light.h"
 
-
-
 #include "imgui.h"
 #include "backends/imgui_impl_sdl.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -28,5 +26,5 @@ public:
 	ImGuiIO* io = nullptr;
 
 	Light lights[MAX_LIGHTS];
-	SDL_GLContext context;
+	SDL_GLContext context = nullptr;
 };

@@ -1,9 +1,9 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
 #include "ModuleWindow.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleInput.h"
+#include "MemLeaks.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {	
@@ -62,29 +62,6 @@ update_status ModuleCamera3D::Update(float dt)
 
 			FrustumCam.pos = target + (FrustumCam.front * -TargetDist);
 	}
-
-	/*if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
-	{
-		if (App->hierarchy->objSelected != nullptr) {
-			float3 target = App->hierarchy->objSelected->transform->position;
-			sceneCam->LookAt(target);
-
-			float TargetDist = sceneCam->FrustumCam.pos.Distance(target);
-
-			Rotation();
-
-			sceneCam->FrustumCam.pos = target + (sceneCam->FrustumCam.front * -TargetDist);
-		}
-	}*/
-
-	/*if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-	{
-		if (App->hierarchy->objSelected != nullptr) {
-			float3 target = App->hierarchy->objSelected->transform->position;
-
-			sceneCam->LookAt(target);
-		}
-	}*/
 
 	if (wheel != 0) FrustumCam.pos += FrustumCam.front * 10 * -wheel;
 
