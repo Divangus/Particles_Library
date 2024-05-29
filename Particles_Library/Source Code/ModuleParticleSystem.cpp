@@ -46,7 +46,10 @@ update_status ModuleParticleSystem::Update(float dt)
 
 	emitter.Update(dt);
 
-	ParticlesMenu();
+	if (particleMenu)
+	{
+		ParticlesMenu();
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -70,64 +73,61 @@ bool ModuleParticleSystem::CleanUp()
 
 void ModuleParticleSystem::ParticlesMenu()
 {
-	if (particleMenu)
+	ImGui::Begin("Particles Editor");
+
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Particle Begin Scale", particleProps.beginScale.ptr());
+
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Particle End Scale", particleProps.endScale.ptr());
+	ImGui::NewLine();
+
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Speed", particleProps.speed.ptr());
+	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Speed Variaton", particleProps.speedVariation.ptr());
+	ImGui::NewLine();
+
+	ImGui::InputFloat("Life Time", &particleProps.LifeTime);
+	ImGui::NewLine();
+
+	ImGui::ColorEdit4("Color", particleProps.Color.ptr());
+	ImGui::ColorEdit4("End Color", particleProps.endColor.ptr());
+	ImGui::NewLine();
+
+	ImGui::Checkbox("Gravity", &particleProps.gravity);
+	ImGui::NewLine();
+
+	if (ImGui::CollapsingHeader("BillBoard: ", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Begin("Particles Editor");
-
-		ImGui::Text("X\t\t Y\t\t Z");
-		ImGui::InputFloat3("Particle Begin Scale", particleProps.beginScale.ptr());
-
-		ImGui::Text("X\t\t Y\t\t Z");
-		ImGui::InputFloat3("Particle End Scale", particleProps.endScale.ptr());
-		ImGui::NewLine();
-
-		ImGui::Text("X\t\t Y\t\t Z");
-		ImGui::InputFloat3("Speed", particleProps.speed.ptr());
-		ImGui::Text("X\t\t Y\t\t Z");
-		ImGui::InputFloat3("Speed Variaton", particleProps.speedVariation.ptr());
-		ImGui::NewLine();
-
-		ImGui::InputFloat("Life Time", &particleProps.LifeTime);
-		ImGui::NewLine();
-
-		ImGui::ColorEdit4("Color", particleProps.Color.ptr());
-		ImGui::ColorEdit4("End Color", particleProps.endColor.ptr());
-		ImGui::NewLine();
-
-		ImGui::Checkbox("Gravity", &particleProps.gravity);
-		ImGui::NewLine();
-
-		if (ImGui::CollapsingHeader("BillBoard: ", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::BeginMenu("Select your BillBoard"))
 		{
-			if (ImGui::BeginMenu("Select your BillBoard"))
+
+			if (ImGui::MenuItem("Screen Align BillBoard"))
 			{
-
-				if (ImGui::MenuItem("Screen Align BillBoard"))
-				{
-					emitter.typeBB = BILLBOARDTYPE::SCREENALIGN;
-					currentBBoard = BBtype[0];
-				}
-				else if (ImGui::MenuItem("World Align BillBoard"))
-				{
-					emitter.typeBB = BILLBOARDTYPE::WORLDALIGN;
-					currentBBoard = BBtype[1];
-				}/*
-				else if (ImGui::MenuItem("Axis Align BillBoard"))
-				{
-					emitter.typeBB = BILLBOARDTYPE::AXISALIGN;
-					currentBBoard = BBtype[2];
-				}*/
-				else if (ImGui::MenuItem("No Align BillBoard"))
-				{
-					emitter.typeBB = BILLBOARDTYPE::NO_ALIGN;
-					currentBBoard = BBtype[3];
-				}
-
-				ImGui::End();
+				emitter.typeBB = BILLBOARDTYPE::SCREENALIGN;
+				currentBBoard = BBtype[0];
+			}
+			else if (ImGui::MenuItem("World Align BillBoard"))
+			{
+				emitter.typeBB = BILLBOARDTYPE::WORLDALIGN;
+				currentBBoard = BBtype[1];
+			}/*
+			else if (ImGui::MenuItem("Axis Align BillBoard"))
+			{
+				emitter.typeBB = BILLBOARDTYPE::AXISALIGN;
+				currentBBoard = BBtype[2];
+			}*/
+			else if (ImGui::MenuItem("No Align BillBoard"))
+			{
+				emitter.typeBB = BILLBOARDTYPE::NO_ALIGN;
+				currentBBoard = BBtype[3];
 			}
 
-			ImGui::TextColored(ImVec4(0, 1, 0, 1), currentBBoard.c_str());
+			ImGui::End();
 		}
-		ImGui::End();
-	}	
+
+		ImGui::TextColored(ImVec4(0, 1, 0, 1), currentBBoard.c_str());
+	}
+	ImGui::End();
 }
