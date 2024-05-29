@@ -16,8 +16,14 @@ public:
 	bool CleanUp();
 
 	void RenderParticles();
+	void ParticlesMenu();
 
 	ParticleProps particleProps;
 	Emitter emitter;
+
+	std::string BBtype[4] = { "Screen Align","World Align","Axis Align","No Align" };
+	std::string currentBBoard;
+
+	bool particleMenu = true;
 };
 

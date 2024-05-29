@@ -31,6 +31,9 @@ void Emitter::Update(float dt) {
 		}
 
 		ParticleList[i].LifeRemaining -= dt;
+		if (ParticleList[i].gravity) {
+			ParticleList[i].speed += float3(0.0f, -9.81f, 0.0f) * dt * 0.5f;
+		}		
 		ParticleList[i].pos += ParticleList[i].speed * dt;
 		ParticleList[i].SetTransformMatrix();
 	}
@@ -55,6 +58,8 @@ void Emitter::Emit(ParticleProps& particleProps)
 	particle.speed.x += particleProps.speedVariation.x * (Random::RandomFloat() - 0.5f);
 	particle.speed.y += particleProps.speedVariation.y * (Random::RandomFloat() - 0.5f);
 	particle.speed.z += particleProps.speedVariation.z * (Random::RandomFloat() - 0.5f);
+
+	particle.gravity = particleProps.gravity;
 
 	// Color
 	particle.Color = particleProps.Color;
@@ -103,6 +108,8 @@ void Emitter::Render() {
 	//Vertices
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_COORD_ARRAY);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
 
@@ -125,9 +132,22 @@ void Emitter::Render() {
 
 		ParticleList[i].SetTransformMatrix();
 
-		//ScreenAlignBBoard(ParticleList[i]);
-		WorldAlignBBoard(ParticleList[i]);
-		//AxisAlignBBoard(ParticleList[i]);
+		switch (typeBB) 
+		{
+		case BILLBOARDTYPE::NO_ALIGN:
+			break;
+		case BILLBOARDTYPE::SCREENALIGN:
+			ScreenAlignBBoard(ParticleList[i]);
+			break;
+		case BILLBOARDTYPE::WORLDALIGN:
+			WorldAlignBBoard(ParticleList[i]);
+			break;
+		case BILLBOARDTYPE::AXISALIGN:
+			AxisAlignBBoard(ParticleList[i]);
+			break;
+		default:
+			break;
+		}
 
 		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
 
@@ -151,7 +171,6 @@ void Emitter::Render() {
 
 void Emitter::ScreenAlignBBoard(Particle& particle)
 {
-
 	//GET INFO ABOUT CAM AXIS
 	float3 activecamfront = Application::GetApp()->camera->FrustumCam.front;
 	//Vector UP is the same as the cam
@@ -171,12 +190,11 @@ void Emitter::ScreenAlignBBoard(Particle& particle)
 
 	//Apply the rotation to the particle
 	Quat q = rotBB.Inverted().ToQuat();
-	particle.transformMat = float4x4::FromTRS(particle.pos, q, particle.scale).Transposed();
+	particle.SetTransformMatrixWithQuat(q);
 }
 
 void Emitter::WorldAlignBBoard(Particle& particle)
 {
-
 	//Vector from particle to cam
 	float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
 
@@ -198,39 +216,18 @@ void Emitter::WorldAlignBBoard(Particle& particle)
 
 	//Apply the rotation to the particle
 	Quat q = rotBB.Inverted().ToQuat();
-	particle.transformMat = float4x4::FromTRS(particle.pos, q, particle.scale).Transposed();
+	particle.SetTransformMatrixWithQuat(q);;
 }
 
 void Emitter::AxisAlignBBoard(Particle& particle)
 {
-	//float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
-	//float3 xAxisBB = { 1.0f,0.0f,0.0f }; // this is always the direction the particle is initially created in.
-
-	//float3x3 rotBB;
-
-	//if (zAxisBB.Dot(xAxisBB) != 1.0f)
-	//{
-	//	float3 yAxisBB = zAxisBB.Cross(xAxisBB).Normalized();
-
-	//	float angle = zAxisBB.AngleBetween(xAxisBB);
-
-	//	angle = angle * DEGTORAD;
-	//	rotBB.RotateAxisAngle(yAxisBB, angle);
-	//}
-	//else
-	//{
-	//	float3 yAxisBB = { 0.01f, 1, 0.01f };
-
-	//	rotBB.RotateAxisAngle(yAxisBB, 0.0f);
-	//}
-	// 
 	//Vector from particle to cam
 	float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
 
-	//X and Y axis alligned to world
-	float3 yAxisBB = { 0.0f,1.0f,0.0f };
+	//Y axis alligned to world
+	float3 yAxisBB = float3(0.0f, 1.0f, 0.0f);
 
-	float3 xAxisBB = { 1.0f,0.0f,0.0f };
+	float3 xAxisBB = float3(1.0f, 0.0f, 0.0f);
 
 	//Gather the axis into a 3x3 matrix
 	float3x3 rotBB = float3x3::identity;
@@ -238,7 +235,6 @@ void Emitter::AxisAlignBBoard(Particle& particle)
 
 	//Apply the rotation to the particle
 	Quat q = rotBB.Inverted().ToQuat();
-
 	particle.SetTransformMatrixWithQuat(q);
 }
 

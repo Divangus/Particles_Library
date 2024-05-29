@@ -2,6 +2,14 @@
 #include "Globals.h"
 #include "MathGeoLib.h"
 
+enum class BILLBOARDTYPE
+{
+	NO_ALIGN,
+	SCREENALIGN,
+	WORLDALIGN,
+	AXISALIGN,
+};
+
 struct ParticleProps
 {
 	float3 pos, rot;
@@ -9,6 +17,8 @@ struct ParticleProps
 	float4 Color, endColor;
 
 	float3 beginScale, endScale, scaleVariaton;
+
+	bool gravity = false;
 
 	//bool texture = true;
 
@@ -25,6 +35,8 @@ struct Particle
 	float3 beginScale, endScale;
 
 	float LifeTime = 1.0f, LifeRemaining = 1.0f;
+
+	bool gravity = false;
 
 	bool Active = false;
 
@@ -54,6 +66,8 @@ public:
 
 	std::vector<Particle> ParticleList;
 	uint32_t currentParticle = 999;
+
+	BILLBOARDTYPE typeBB = BILLBOARDTYPE::NO_ALIGN;
 
 	uint id_indices = 0;
 	uint id_vertices = 0;
