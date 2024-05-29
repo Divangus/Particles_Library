@@ -152,8 +152,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	PlaneC plane(float3(0, 0, 0), 0);
-	plane.Render();
+	/*PlaneC plane(float3(0, 0, 0), 0);
+	plane.Render();*/
 
 	App->particleSystem->RenderParticles();	
 

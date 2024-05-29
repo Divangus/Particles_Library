@@ -17,7 +17,7 @@ bool ModuleCamera3D::Start()
 {
 	LOG("Setting up the camera");
 	bool ret = true;
-	target = float3::zero;
+	target = float3(0.0f, 2.0f, 0.0f);
 
 	SetCam();
 	GenBuffer();

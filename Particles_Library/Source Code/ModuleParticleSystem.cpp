@@ -111,12 +111,12 @@ void ModuleParticleSystem::ParticlesMenu()
 				{
 					emitter.typeBB = BILLBOARDTYPE::WORLDALIGN;
 					currentBBoard = BBtype[1];
-				}
+				}/*
 				else if (ImGui::MenuItem("Axis Align BillBoard"))
 				{
 					emitter.typeBB = BILLBOARDTYPE::AXISALIGN;
 					currentBBoard = BBtype[2];
-				}
+				}*/
 				else if (ImGui::MenuItem("No Align BillBoard"))
 				{
 					emitter.typeBB = BILLBOARDTYPE::NO_ALIGN;
