@@ -35,7 +35,28 @@ void Emitter::Update(float dt) {
 			ParticleList[i].speed += float3(0.0f, -9.81f, 0.0f) * dt * 0.5f;
 		}		
 		ParticleList[i].pos += ParticleList[i].speed * dt;
+
+		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
+		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
+
 		ParticleList[i].SetTransformMatrix();
+
+		switch (typeBB)
+		{
+		case BILLBOARDTYPE::NO_ALIGN:
+			break;
+		case BILLBOARDTYPE::SCREENALIGN:
+			ScreenAlignBBoard(ParticleList[i]);
+			break;
+		case BILLBOARDTYPE::WORLDALIGN:
+			WorldAlignBBoard(ParticleList[i]);
+			break;
+		case BILLBOARDTYPE::AXISALIGN:
+			AxisAlignBBoard(ParticleList[i]);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -105,6 +126,23 @@ void Emitter::ParticleBuffer()
 
 void Emitter::Render() {
 
+	// Calcular la posición de la cámara
+	float3 cameraPosition = Application::GetApp()->camera->FrustumCam.pos;
+
+	// Calcular y asociar distancias
+	std::vector<std::pair<float, Particle*>> distances;
+	for (int i = 0; i < ParticleList.size(); i++) {
+		if (ParticleList[i].Active) {
+			float distance = (ParticleList[i].pos - cameraPosition).LengthSq();
+			distances.push_back(std::make_pair(distance, &ParticleList[i]));
+		}
+	}
+
+	// Ordenar las partículas según la distancia
+	std::sort(distances.begin(), distances.end(), [](const auto& lhs, const auto& rhs) {
+		return lhs.first > rhs.first; // Orden descendente para renderizar las más cercanas primero
+	});
+
 	//Vertices
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_COORD_ARRAY);
@@ -119,49 +157,33 @@ void Emitter::Render() {
 	//bind and use other buffers
 
 	if (text) {
+		glColor4f(1.0, 1.0, 1.0, 1.0);
 		glBindTexture(GL_TEXTURE_2D, textID);
 	}
 
 	//Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
 
-	for (int i = 0; i < ParticleList.size(); i++)
-	{
-		if (!ParticleList[i].Active)
+	/*for (int i = 0; i < ParticleList.size(); i++)
+	{*/
+	for (const auto& pair : distances) {
+		Particle* particle = pair.second;
+
+		if (!particle->Active)
 			continue;
-
-
-		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
-		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
-
-		ParticleList[i].SetTransformMatrix();
-
-		switch (typeBB) 
-		{
-		case BILLBOARDTYPE::NO_ALIGN:
-			break;
-		case BILLBOARDTYPE::SCREENALIGN:
-			ScreenAlignBBoard(ParticleList[i]);
-			break;
-		case BILLBOARDTYPE::WORLDALIGN:
-			WorldAlignBBoard(ParticleList[i]);
-			break;
-		case BILLBOARDTYPE::AXISALIGN:
-			AxisAlignBBoard(ParticleList[i]);
-			break;
-		default:
-			break;
-		}
 
 		if (!text)
 		{
+			float life = particle->LifeRemaining / particle->LifeTime;
+
+			float4 printColor = Lerp(particle->endColor, particle->Color, life);
+
 			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
 		}
 
 		glPushMatrix();
 
-		glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
+		glMultMatrixf(particle->GetTransformMatrix().ptr());
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
