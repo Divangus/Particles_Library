@@ -29,6 +29,7 @@ struct Particle
 	bool Active = false;
 
 	void SetTransformMatrix();
+	void SetTransformMatrixWithQuat(Quat rotation);
 	void SetTransform(float4x4 matrix);
 	float4x4 GetTransformMatrix();
 };
@@ -44,7 +45,10 @@ public:
 
 	void ParticleBuffer();
 	void Render();
-	void Billboard(Particle& particle);
+
+	void ScreenAlignBBoard(Particle& particle);
+	void WorldAlignBBoard(Particle& particle);
+	void AxisAlignBBoard(Particle& particle);
 
 	//bool text = true;
 

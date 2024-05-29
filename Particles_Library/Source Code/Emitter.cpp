@@ -125,7 +125,9 @@ void Emitter::Render() {
 
 		ParticleList[i].SetTransformMatrix();
 
-		Billboard(ParticleList[i]);
+		//ScreenAlignBBoard(ParticleList[i]);
+		WorldAlignBBoard(ParticleList[i]);
+		//AxisAlignBBoard(ParticleList[i]);
 
 		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
 
@@ -147,39 +149,97 @@ void Emitter::Render() {
 
 }
 
-void Emitter::Billboard(Particle& particle) {
+void Emitter::ScreenAlignBBoard(Particle& particle)
+{
 
-	float3 right, up, look;
+	//GET INFO ABOUT CAM AXIS
+	float3 activecamfront = Application::GetApp()->camera->FrustumCam.front;
+	//Vector UP is the same as the cam
+	float3 activecamup = Application::GetApp()->camera->FrustumCam.up;
 
-	look = float3(Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
-	up = Application::GetApp()->camera->FrustumCam.up;
-	right = up.Cross(look);
+	//Z-AXIS MUST BE INVERTED 
+	float3 zAxisBB = -activecamfront;
+	//Y-AXIS KEEPS THE SAME VALUE
+	float3 yAxisBB = activecamup;
 
-	float4x4 transform = float4x4::identity;
-	transform[0][0] = right.x * particle.scale.x;
-	transform[1][0] = right.y;
-	transform[2][0] = right.z;
+	//COMPUTE CROSS PRODUCT IN ORDER TO GET THE REMAINING AXIS
+	float3 xAxisBB = yAxisBB.Cross(zAxisBB).Normalized();
 
-	transform[0][1] = up.x;
-	transform[1][1] = up.y * particle.scale.y;
-	transform[2][1] = up.z;
+	//Gather the axis into a 3x3 matrix
+	float3x3 rotBB;
+	rotBB.Set(xAxisBB.x, xAxisBB.y, xAxisBB.z, yAxisBB.x, yAxisBB.y, yAxisBB.z, zAxisBB.x, zAxisBB.y, zAxisBB.z);
 
-	transform[0][2] = look.x;
-	transform[1][2] = look.y;
-	transform[2][2] = look.z * particle.scale.z;
+	//Apply the rotation to the particle
+	Quat q = rotBB.Inverted().ToQuat();
+	particle.transformMat = float4x4::FromTRS(particle.pos, q, particle.scale).Transposed();
+}
 
-	transform[0][3] = particle.pos.x;
-	transform[1][3] = particle.pos.y;
-	transform[2][3] = particle.pos.z;
+void Emitter::WorldAlignBBoard(Particle& particle)
+{
 
-	transform[3][0] = 0;
-	transform[3][1] = 0;
-	transform[3][2] = 0;
-	transform[3][3] = 1;
+	//Vector from particle to cam
+	float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
 
-	transform.Transpose();
+	//Vector UP is the same as the cam
 
-	particle.transformMat = transform;
+	float3 yAxisBB = Application::GetApp()->camera->FrustumCam.up;
+
+	//COMPUTE CROSS PRODUCT IN ORDER TO GET THE REMAINING AXIS
+
+	float3 xAxisBB = yAxisBB.Cross(zAxisBB).Normalized();
+
+	//COMPUTE Y AXIS AGAIN IN ORDER TO BE SURE THAT THE ANGLE BETWEEN Z AND Y IS 90 degrees
+
+	yAxisBB = zAxisBB.Cross(xAxisBB).Normalized();
+
+	//Gather the axis into a 3x3 matrix
+	float3x3 rotBB;
+	rotBB.Set(xAxisBB.x, xAxisBB.y, xAxisBB.z, yAxisBB.x, yAxisBB.y, yAxisBB.z, zAxisBB.x, zAxisBB.y, zAxisBB.z);
+
+	//Apply the rotation to the particle
+	Quat q = rotBB.Inverted().ToQuat();
+	particle.transformMat = float4x4::FromTRS(particle.pos, q, particle.scale).Transposed();
+}
+
+void Emitter::AxisAlignBBoard(Particle& particle)
+{
+	//float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
+	//float3 xAxisBB = { 1.0f,0.0f,0.0f }; // this is always the direction the particle is initially created in.
+
+	//float3x3 rotBB;
+
+	//if (zAxisBB.Dot(xAxisBB) != 1.0f)
+	//{
+	//	float3 yAxisBB = zAxisBB.Cross(xAxisBB).Normalized();
+
+	//	float angle = zAxisBB.AngleBetween(xAxisBB);
+
+	//	angle = angle * DEGTORAD;
+	//	rotBB.RotateAxisAngle(yAxisBB, angle);
+	//}
+	//else
+	//{
+	//	float3 yAxisBB = { 0.01f, 1, 0.01f };
+
+	//	rotBB.RotateAxisAngle(yAxisBB, 0.0f);
+	//}
+	// 
+	//Vector from particle to cam
+	float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
+
+	//X and Y axis alligned to world
+	float3 yAxisBB = { 0.0f,1.0f,0.0f };
+
+	float3 xAxisBB = { 1.0f,0.0f,0.0f };
+
+	//Gather the axis into a 3x3 matrix
+	float3x3 rotBB = float3x3::identity;
+	rotBB.Set(xAxisBB.x, xAxisBB.y, xAxisBB.z, yAxisBB.x, yAxisBB.y, yAxisBB.z, zAxisBB.x, zAxisBB.y, zAxisBB.z);
+
+	//Apply the rotation to the particle
+	Quat q = rotBB.Inverted().ToQuat();
+
+	particle.SetTransformMatrixWithQuat(q);
 }
 
 void Particle::SetTransformMatrix()
@@ -191,7 +251,17 @@ void Particle::SetTransformMatrix()
 	Quat q = Quat::FromEulerXYZ(x, y, z);
 
 	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
+}
 
+void Particle::SetTransformMatrixWithQuat(Quat rotation)
+{
+	float x = rot.x * DEGTORAD;
+	float y = rot.y * DEGTORAD;
+	float z = rot.z * DEGTORAD;
+
+	Quat q = rotation * Quat::FromEulerXYZ(x, y, z);
+
+	transformMat = float4x4::FromTRS(pos, q, scale).Transposed();
 }
 
 void Particle::SetTransform(float4x4 matrix)
