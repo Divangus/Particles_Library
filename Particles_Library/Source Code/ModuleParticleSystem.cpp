@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleParticleSystem.h"
 #include "MemLeaks.h"
+#include "ModuleTexture.h"
 
 ModuleParticleSystem::ModuleParticleSystem(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -32,6 +33,10 @@ bool ModuleParticleSystem::Start()
 
 	emitter.typeBB = BILLBOARDTYPE::SCREENALIGN;
 	currentBBoard = BBtype[0];
+
+	emitter.textID = App->texture->checkerID;
+	defaultName = "NO TEXTURE LOADED (Drag and drop a PNG or DDS file to load it as texture)";
+	textureName = defaultName;
 
 	emitter.ParticleBuffer();
 
@@ -88,14 +93,14 @@ void ModuleParticleSystem::ParticlesMenu()
 	ImGui::InputFloat3("Speed Variaton", particleProps.speedVariation.ptr());
 	ImGui::NewLine();
 
+	ImGui::Checkbox("Gravity", &particleProps.gravity);
+	ImGui::NewLine();
+
 	ImGui::InputFloat("Life Time", &particleProps.LifeTime);
 	ImGui::NewLine();
 
 	ImGui::ColorEdit4("Color", particleProps.Color.ptr());
 	ImGui::ColorEdit4("End Color", particleProps.endColor.ptr());
-	ImGui::NewLine();
-
-	ImGui::Checkbox("Gravity", &particleProps.gravity);
 	ImGui::NewLine();
 
 	if (ImGui::CollapsingHeader("BillBoard: ", ImGuiTreeNodeFlags_DefaultOpen))
@@ -129,5 +134,30 @@ void ModuleParticleSystem::ParticlesMenu()
 
 		ImGui::TextColored(ImVec4(0, 1, 0, 1), currentBBoard.c_str());
 	}
+	if (ImGui::CollapsingHeader("Texture: ", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Checkbox("Active Texture", &emitter.text);
+		ImGui::Text("Loaded Texture: ");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), textureName.c_str());
+		if (ImGui::Button("Clear Texture")) 
+		{
+			ClearTexture();
+		}
+	}
 	ImGui::End();
+}
+
+void ModuleParticleSystem::LoadParticleTexture(std::string fileName)
+{
+	textureName = fileName.substr(fileName.find_last_of("\\") + 1);
+
+	emitter.textID = App->texture->LoadTexture(fileName);
+}
+
+void ModuleParticleSystem::ClearTexture()
+{
+	textureName = defaultName;
+
+	emitter.textID = App->texture->checkerID;
 }

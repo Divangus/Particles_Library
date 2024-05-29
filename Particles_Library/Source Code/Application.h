@@ -9,6 +9,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleGui.h"
 #include "ModuleParticleSystem.h"
+#include "ModuleTexture.h"
 
 
 class Application
@@ -20,6 +21,7 @@ public:
 	ModuleCamera3D* camera;
 	ModuleGui* gui;
 	ModuleParticleSystem* particleSystem;
+	ModuleTexture* texture;
 
 
 private:

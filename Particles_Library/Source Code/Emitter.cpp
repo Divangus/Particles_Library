@@ -7,7 +7,7 @@
 
 Emitter::Emitter() {
 
-	ParticleList.resize(1000);
+	ParticleList.resize(MaxParticles);
 
 	currentParticle = ParticleList.size() - 1;
 }
@@ -108,6 +108,7 @@ void Emitter::Render() {
 	//Vertices
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_COORD_ARRAY);
+	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -116,6 +117,10 @@ void Emitter::Render() {
 	glVertexPointer(3, GL_FLOAT, sizeof(float) * VERTICES, NULL);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(float) * VERTICES, (void*)(sizeof(float) * 3));
 	//bind and use other buffers
+
+	if (text) {
+		glBindTexture(GL_TEXTURE_2D, textID);
+	}
 
 	//Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
@@ -149,7 +154,10 @@ void Emitter::Render() {
 			break;
 		}
 
-		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
+		if (!text)
+		{
+			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
+		}
 
 		glPushMatrix();
 
@@ -163,6 +171,7 @@ void Emitter::Render() {
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	//cleaning texture
+	glDepthMask(GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_COORD_ARRAY);

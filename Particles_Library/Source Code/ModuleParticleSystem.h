@@ -4,6 +4,8 @@
 #include "MathGeoLib.h"
 #include "Emitter.h"
 
+#include <string>
+
 class ModuleParticleSystem : public Module
 {
 public:
@@ -18,11 +20,16 @@ public:
 	void RenderParticles();
 	void ParticlesMenu();
 
+	void LoadParticleTexture(std::string fileName);
+	void ClearTexture();
+
 	ParticleProps particleProps;
 	Emitter emitter;
 
 	std::string BBtype[4] = { "Screen Align","World Align","Axis Align","No Align" };
 	std::string currentBBoard;
+
+	std::string textureName, defaultName;
 
 	bool particleMenu = true;
 };

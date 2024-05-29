@@ -2,6 +2,10 @@
 #include "Globals.h"
 #include "MathGeoLib.h"
 
+#include <algorithm>
+
+#define MaxParticles 1000
+
 enum class BILLBOARDTYPE
 {
 	NO_ALIGN,
@@ -40,6 +44,8 @@ struct Particle
 
 	bool Active = false;
 
+	float cameradistance;
+
 	void SetTransformMatrix();
 	void SetTransformMatrixWithQuat(Quat rotation);
 	void SetTransform(float4x4 matrix);
@@ -62,14 +68,17 @@ public:
 	void WorldAlignBBoard(Particle& particle);
 	void AxisAlignBBoard(Particle& particle);
 
-	//bool text = true;
+	void SortParticles();
+
+	bool text = false;
 
 	std::vector<Particle> ParticleList;
-	uint32_t currentParticle = 999;
+	uint32_t currentParticle = MaxParticles - 1;
 
 	BILLBOARDTYPE typeBB = BILLBOARDTYPE::NO_ALIGN;
 
 	uint id_indices = 0;
 	uint id_vertices = 0;
+	uint textID = 0;
 };
 

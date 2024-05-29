@@ -93,6 +93,9 @@
     <ClCompile Include="Source Code\ModuleParticleSystem.cpp">
       <Filter>Particles</Filter>
     </ClCompile>
+    <ClCompile Include="Source Code\ModuleTexture.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source Code\Application.h">
@@ -415,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="Source Code\ModuleParticleSystem.h">
       <Filter>Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Source Code\ModuleTexture.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

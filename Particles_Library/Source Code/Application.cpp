@@ -19,8 +19,8 @@ Application::Application()
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 	gui = new ModuleGui(this);
+	texture = new ModuleTexture(this);
 	particleSystem = new ModuleParticleSystem(this);
-
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -29,8 +29,10 @@ Application::Application()
 	// Main Modules
 	AddModule(window);
 	AddModule(camera);
-	AddModule(particleSystem);
 	AddModule(input);//////
+
+	AddModule(texture);
+	AddModule(particleSystem);
 	AddModule(gui);
 
 	// Renderer last!

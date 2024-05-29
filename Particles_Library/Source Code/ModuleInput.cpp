@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleParticleSystem.h"
 #include "MemLeaks.h"
 
 #define MAX_KEYS 300
@@ -110,10 +111,15 @@ update_status ModuleInput::PreUpdate(float dt)
 			quit = true;
 			break;
 
-			case SDL_WINDOWEVENT:
+			/*case SDL_WINDOWEVENT:
 			{
 				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
 					App->renderer3D->OnResize(e.window.data1, e.window.data2);
+			}*/
+
+			case SDL_DROPFILE:
+			{
+				CheckFileExtension(e.drop.file);
 			}
 		}
 	}
@@ -130,4 +136,21 @@ bool ModuleInput::CleanUp()
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+void ModuleInput::CheckFileExtension(std::string fileName)
+{
+	std::string extension = fileName.substr(fileName.find_last_of(".") + 1);
+
+	if (extension == "png" || extension == "dds" || extension == "PNG" || extension == "DDS")
+	{
+		LOG("Loading Textures");
+
+		App->particleSystem->LoadParticleTexture(fileName);
+
+	}
+	else
+	{
+		LOG("Error: this file extension not supported")
+	}
 }
