@@ -148,8 +148,8 @@ bool ModuleRenderer3D::Init()
 	}
 
 	// Load and create shaders
-	std::string vertexShaderSource = ReadFile("path/to/vertex_shader.glsl");
-	std::string fragmentShaderSource = ReadFile("path/to/fragment_shader.glsl");
+	std::string vertexShaderSource = ReadFile("ParticleFShader.glsl");
+	std::string fragmentShaderSource = ReadFile("ParticleVShader.glsl");
 	shaderProgram = CreateShader(vertexShaderSource, fragmentShaderSource);
 
 	//IMGUI

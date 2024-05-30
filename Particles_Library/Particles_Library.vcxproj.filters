@@ -427,7 +427,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Project\ParticleShader.glsl">
+    <None Include="Project\ParticleFShader.glsl">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Project\ParticleVShader.glsl">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
