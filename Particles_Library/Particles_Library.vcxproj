@@ -191,7 +191,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <AdditionalLibraryDirectories>$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;$(ProjectDir)Source Code\Externals\MathGeoLib\libx86\DebugX86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;glew32s.lib;MathGeoLib.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>

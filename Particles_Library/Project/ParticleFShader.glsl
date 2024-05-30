@@ -1,4 +1,4 @@
-#version 130
+#version 430
 
 in vec2 vTexCoord;
 uniform sampler2D uTexture;
