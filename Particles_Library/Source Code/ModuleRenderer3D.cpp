@@ -11,6 +11,51 @@
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
+GLuint CompileShader(const std::string& source, GLenum shaderType)
+{
+	GLuint shader = glCreateShader(shaderType);
+	const char* src = source.c_str();
+	glShaderSource(shader, 1, &src, nullptr);
+	glCompileShader(shader);
+
+	int result;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE)
+	{
+		LOG("Failed to compile ", shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment", " shader!");
+		glDeleteShader(shader);
+
+		return 0;
+	}
+
+	return shader;
+}
+
+GLuint CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+{
+	GLuint program = glCreateProgram();
+	GLuint vs = CompileShader(vertexShader, GL_VERTEX_SHADER);
+	GLuint fs = CompileShader(fragmentShader, GL_FRAGMENT_SHADER);
+
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return program;
+}
+
+std::string ReadFile(const std::string& filepath)
+{
+	std::ifstream file(filepath);
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	return buffer.str();
+}
+
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -102,6 +147,11 @@ bool ModuleRenderer3D::Init()
 		glEnable(GL_COLOR_MATERIAL);
 	}
 
+	// Load and create shaders
+	std::string vertexShaderSource = ReadFile("path/to/vertex_shader.glsl");
+	std::string fragmentShaderSource = ReadFile("path/to/fragment_shader.glsl");
+	shaderProgram = CreateShader(vertexShaderSource, fragmentShaderSource);
+
 	//IMGUI
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -123,16 +173,14 @@ bool ModuleRenderer3D::Init()
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glLoadMatrixf(App->camera->GetProjectionMatrix());
+   
+	glUseProgram(shaderProgram);
+	
+	GLuint projLoc = glGetUniformLocation(shaderProgram, "projectionMatrix");
+	GLuint viewLoc = glGetUniformLocation(shaderProgram, "modelViewMatrix");
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glLoadMatrixf(App->camera->GetViewMatrix());
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix());
 
 	// light 0 on cam pos
 	lights[0].SetPos(App->camera->FrustumCam.pos.x, App->camera->FrustumCam.pos.y, App->camera->FrustumCam.pos.z);
@@ -145,6 +193,8 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
+
+	glUseProgram(0);
 
 	return UPDATE_CONTINUE;
 }
@@ -174,6 +224,8 @@ bool ModuleRenderer3D::CleanUp()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
+
+	glDeleteProgram(shaderProgram);
 
 	SDL_GL_DeleteContext(context);
 

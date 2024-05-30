@@ -25,6 +25,9 @@
     <Filter Include="Particles">
       <UniqueIdentifier>{f114272c-a282-4f30-9e1e-52318ccc61f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{5f310f30-3977-4770-8aeb-a5b2a2af424d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source Code\Application.cpp">
@@ -422,5 +425,10 @@
     <ClInclude Include="Source Code\ModuleTexture.h">
       <Filter>Modules</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Project\ParticleShader.glsl">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

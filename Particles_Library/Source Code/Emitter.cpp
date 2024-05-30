@@ -88,57 +88,56 @@ void Emitter::ParticleBuffer()
 
 	};
 
-	//Fill buffers with vertices
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glGenBuffers(1, (GLuint*)&(id_vertices));
-	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * VERTICES, vertices, GL_STATIC_DRAW);
+	// Generar y configurar el VAO
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	//Fill buffers with indices
-	glGenBuffers(1, (GLuint*)&(id_indices));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 6, indices, GL_STATIC_DRAW);
+	// Generar y llenar el VBO con datos de vértices
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
+	// Atributo posición
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+	// Atributo coordenadas de textura
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	// Generar y llenar el EBO con datos de índices
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Desvincular VAO
+	glBindVertexArray(0);
 
 }
 
-void Emitter::Render() {
+void Emitter::Render(GLuint shader) {
 
-	//Vertices
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_COORD_ARRAY);
-	glDepthMask(GL_FALSE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
+	// Usar el shader program
+	glUseProgram(shader);
 
-	glVertexPointer(3, GL_FLOAT, sizeof(float) * VERTICES, NULL);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(float) * VERTICES, (void*)(sizeof(float) * 3));
-	//bind and use other buffers
+	GLuint modelLoc = glGetUniformLocation(shader, "modelMatrix");
+	GLuint viewLoc = glGetUniformLocation(shader, "viewMatrix");
+	GLuint projLoc = glGetUniformLocation(shader, "projectionMatrix");
 
-	if (text) {
-		glBindTexture(GL_TEXTURE_2D, textID);
-	}
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, Application::GetApp()->camera->GetViewMatrix());
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, Application::GetApp()->camera->GetProjectionMatrix());
 
-	//Indices
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textID);
+	glUniform1i(glGetUniformLocation(shader, "uTexture"), 0);
 
-	for (int i = 0; i < ParticleList.size(); i++)
-	{
+	glBindVertexArray(vao);
+
+	for (int i = 0; i < ParticleList.size(); i++) {
 		if (!ParticleList[i].Active)
 			continue;
 
-
-		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
-		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
-
-		ParticleList[i].SetTransformMatrix();
-
-		switch (typeBB) 
-		{
+		switch (typeBB) {
 		case BILLBOARDTYPE::NO_ALIGN:
 			break;
 		case BILLBOARDTYPE::SCREENALIGN:
@@ -154,27 +153,85 @@ void Emitter::Render() {
 			break;
 		}
 
-		if (!text)
-		{
-			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
-		}
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, ParticleList[i].GetTransformMatrix().ptr());
 
-		glPushMatrix();
-
-		glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-
-		glPopMatrix();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	//cleaning texture
-	glDepthMask(GL_TRUE);
+	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_TEXTURE_COORD_ARRAY);
+	glUseProgram(0);
+
+	////Vertices
+	//glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_COORD_ARRAY);
+	//glDepthMask(GL_FALSE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glEnableClientState(GL_VERTEX_ARRAY);
+	//glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
+
+	//glVertexPointer(3, GL_FLOAT, sizeof(float) * VERTICES, NULL);
+	//glTexCoordPointer(2, GL_FLOAT, sizeof(float) * VERTICES, (void*)(sizeof(float) * 3));
+	////bind and use other buffers
+
+	//if (text) {
+	//	glBindTexture(GL_TEXTURE_2D, textID);
+	//}
+
+	////Indices
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
+
+	//for (int i = 0; i < ParticleList.size(); i++)
+	//{
+	//	if (!ParticleList[i].Active)
+	//		continue;
+
+
+	//	float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
+	//	ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
+	//	float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
+
+	//	ParticleList[i].SetTransformMatrix();
+
+	//	switch (typeBB) 
+	//	{
+	//	case BILLBOARDTYPE::NO_ALIGN:
+	//		break;
+	//	case BILLBOARDTYPE::SCREENALIGN:
+	//		ScreenAlignBBoard(ParticleList[i]);
+	//		break;
+	//	case BILLBOARDTYPE::WORLDALIGN:
+	//		WorldAlignBBoard(ParticleList[i]);
+	//		break;
+	//	case BILLBOARDTYPE::AXISALIGN:
+	//		AxisAlignBBoard(ParticleList[i]);
+	//		break;
+	//	default:
+	//		break;
+	//	}
+
+	//	if (!text)
+	//	{
+	//		glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
+	//	}
+
+	//	glPushMatrix();
+
+	//	glMultMatrixf(ParticleList[i].GetTransformMatrix().ptr());
+
+	//	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+
+	//	glPopMatrix();
+	//}
+
+	//glDisableClientState(GL_VERTEX_ARRAY);
+
+	////cleaning texture
+	//glDepthMask(GL_TRUE);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_COORD_ARRAY);
 
 }
 

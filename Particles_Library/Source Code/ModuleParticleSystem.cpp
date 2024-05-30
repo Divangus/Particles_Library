@@ -67,7 +67,7 @@ update_status ModuleParticleSystem::PostUpdate(float dt)
 
 void ModuleParticleSystem::RenderParticles()
 {
-	emitter.Render();
+	emitter.Render(App->renderer3D->shaderProgram);
 }
 
 // -----------------------------------------------------------------

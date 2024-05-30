@@ -7,6 +7,11 @@
 #include "backends/imgui_impl_sdl.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 #define MAX_LIGHTS 8
 
 class ModuleRenderer3D : public Module
@@ -22,9 +27,10 @@ public:
 
 	void OnResize(int width, int height);
 
-public:
 	ImGuiIO* io = nullptr;
 
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context = nullptr;
+
+	GLuint shaderProgram;
 };

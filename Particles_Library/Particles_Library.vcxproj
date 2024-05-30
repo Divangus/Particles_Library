@@ -145,6 +145,9 @@
     <ClInclude Include="Source Code\Random.h" />
     <ClInclude Include="Source Code\Timer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Project\ParticleShader.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
