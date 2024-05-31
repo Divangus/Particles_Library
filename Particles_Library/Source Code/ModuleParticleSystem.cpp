@@ -34,6 +34,9 @@ bool ModuleParticleSystem::Start()
 	emitter.typeBB = BILLBOARDTYPE::SCREENALIGN;
 	currentBBoard = BBtype[0];
 
+	emitter.alignAxis = AXISALIGNBB::Y_AXIS;
+	currentAxis = AxisAlign[1];
+
 	emitter.textID = App->texture->checkerID;
 	defaultName = "NO TEXTURE LOADED (Drag and drop a PNG or DDS file to load it as texture)";
 	textureName = defaultName;
@@ -117,12 +120,12 @@ void ModuleParticleSystem::ParticlesMenu()
 			{
 				emitter.typeBB = BILLBOARDTYPE::WORLDALIGN;
 				currentBBoard = BBtype[1];
-			}/*
+			}
 			else if (ImGui::MenuItem("Axis Align BillBoard"))
 			{
 				emitter.typeBB = BILLBOARDTYPE::AXISALIGN;
 				currentBBoard = BBtype[2];
-			}*/
+			}
 			else if (ImGui::MenuItem("No Align BillBoard"))
 			{
 				emitter.typeBB = BILLBOARDTYPE::NO_ALIGN;
@@ -133,6 +136,35 @@ void ModuleParticleSystem::ParticlesMenu()
 		}
 
 		ImGui::TextColored(ImVec4(0, 1, 0, 1), currentBBoard.c_str());
+
+		if (emitter.typeBB == BILLBOARDTYPE::AXISALIGN)
+		{
+			if (ImGui::BeginMenu("Change Axis"))
+			{
+
+				if (ImGui::MenuItem("X"))
+				{
+					emitter.alignAxis = AXISALIGNBB::X_AXIS;
+					currentAxis = AxisAlign[0];
+				}
+				else if (ImGui::MenuItem("Y"))
+				{
+					emitter.alignAxis = AXISALIGNBB::Y_AXIS;
+					currentAxis = AxisAlign[1];
+				}
+				else if (ImGui::MenuItem("Z"))
+				{
+					emitter.alignAxis = AXISALIGNBB::Z_AXIS;
+					currentAxis = AxisAlign[2];
+				}
+
+				ImGui::End();
+			}
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), "Current Axis: ");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), currentAxis.c_str());
+		}
+		
 	}
 	if (ImGui::CollapsingHeader("Texture: ", ImGuiTreeNodeFlags_DefaultOpen))
 	{

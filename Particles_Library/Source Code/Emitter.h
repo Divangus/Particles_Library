@@ -14,6 +14,13 @@ enum class BILLBOARDTYPE
 	AXISALIGN,
 };
 
+enum class AXISALIGNBB
+{
+	X_AXIS,
+	Y_AXIS,
+	Z_AXIS,
+};
+
 struct ParticleProps
 {
 	float3 pos, rot;
@@ -23,8 +30,6 @@ struct ParticleProps
 	float3 beginScale, endScale, scaleVariaton;
 
 	bool gravity = false;
-
-	//bool texture = true;
 
 	float LifeTime = 1.0f;
 };
@@ -76,6 +81,7 @@ public:
 	uint32_t currentParticle = MaxParticles - 1;
 
 	BILLBOARDTYPE typeBB = BILLBOARDTYPE::NO_ALIGN;
+	AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
 
 	uint id_indices = 0;
 	uint id_vertices = 0;

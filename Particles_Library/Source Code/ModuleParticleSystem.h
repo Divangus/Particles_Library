@@ -29,6 +29,9 @@ public:
 	std::string BBtype[4] = { "Screen Align","World Align","Axis Align","No Align" };
 	std::string currentBBoard;
 
+	std::string AxisAlign[3] = { "X","Y","Z" };
+	std::string currentAxis;
+
 	std::string textureName, defaultName;
 
 	bool particleMenu = true;

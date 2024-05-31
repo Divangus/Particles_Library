@@ -248,14 +248,39 @@ void Emitter::AxisAlignBBoard(Particle& particle)
 	//Vector from particle to cam
 	float3 zAxisBB = (Application::GetApp()->camera->FrustumCam.pos - particle.pos).Normalized();
 
-	//Y axis alligned to world
-	float3 yAxisBB = float3(0.0f, 1.0f, 0.0f);
+	float3 yAxisBB = float3::zero;
 
-	float3 xAxisBB = float3(1.0f, 0.0f, 0.0f);
+	//Define the arbitrary up vector (can be y-axis or any other vector)
+	switch (alignAxis) {
+	case AXISALIGNBB::X_AXIS:
+		yAxisBB = float3(1.0f, 0.0f, 0.0f);
+		break;
+	case AXISALIGNBB::Y_AXIS:
+		yAxisBB = float3(0.0f, 1.0f, 0.0f);
+		break;
+	case AXISALIGNBB::Z_AXIS:
+		yAxisBB = float3(0.0f, 0.0f, 1.0f);
+		break;
+	default:
+		yAxisBB = float3(0.0f, 1.0f, 0.0f);
+		break;
+	}
+
+	// Calculate the right vector using cross product of up and look vectors
+	float3 xAxisBB = yAxisBB.Cross(zAxisBB).Normalized();
+
+	// Recalculate the up vector to ensure it is orthogonal
+	float3 correctedYAxisBB = zAxisBB.Cross(xAxisBB).Normalized();
+
+	// Check if the vectors are valid and not zero vectors (handle parallel case)
+	if (xAxisBB.Length() < 0.0001f || correctedYAxisBB.Length() < 0.0001f) {
+		//skip further calculation in this rare case
+		return;
+	}
 
 	//Gather the axis into a 3x3 matrix
 	float3x3 rotBB = float3x3::identity;
-	rotBB.Set(xAxisBB.x, xAxisBB.y, xAxisBB.z, yAxisBB.x, yAxisBB.y, yAxisBB.z, zAxisBB.x, zAxisBB.y, zAxisBB.z);
+	rotBB.Set(xAxisBB.x, xAxisBB.y, xAxisBB.z, correctedYAxisBB.x, correctedYAxisBB.y, correctedYAxisBB.z, zAxisBB.x, zAxisBB.y, zAxisBB.z);
 
 	//Apply the rotation to the particle
 	Quat q = rotBB.Inverted().ToQuat();
