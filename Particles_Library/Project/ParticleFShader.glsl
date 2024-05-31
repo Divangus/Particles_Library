@@ -12,7 +12,7 @@ void main()
 {
 	if(text == true){
 		
-		oColor = texture(uTexture, vTexCoord);
+		oColor = printColor * texture(uTexture, vTexCoord);
 
 	}
 	else{
