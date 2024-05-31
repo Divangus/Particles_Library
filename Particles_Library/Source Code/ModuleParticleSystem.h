@@ -37,7 +37,7 @@ public:
 	bool particleMenu = true;
 
 	bool EmissionControl = false;
-	int ParticlesPerSecond;
+	int ParticlesPerSecond = 1;
 	float accumulator = 0.0f;
 };
 
