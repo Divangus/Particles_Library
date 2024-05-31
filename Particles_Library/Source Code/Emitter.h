@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#define MaxParticles 1000
+#define MaxParticles 10000
 
 enum class BILLBOARDTYPE
 {
@@ -84,5 +84,7 @@ public:
 	GLuint vao = 0;
 	GLuint vbo = 0;
 	GLuint ebo = 0;
+	GLuint instanceVBO = 0;
+	GLuint instanceColorVBO = 0;	
 };
 

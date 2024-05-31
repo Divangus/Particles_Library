@@ -128,17 +128,35 @@ void Emitter::ParticleBuffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 6, indices, GL_STATIC_DRAW);
 
-	// Desvincular VAO
+	// Instance buffer
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(float4x4), nullptr, GL_DYNAMIC_DRAW);
+
+	// Set attribute pointers for matrix (4 times vec4)
+	for (int i = 0; i < 4; i++) {
+		glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(float4x4), (void*)(i * sizeof(vec4)));
+		glEnableVertexAttribArray(2 + i);
+		glVertexAttribDivisor(2 + i, 1);
+	}
+
+	// Instance color buffer
+	glGenBuffers(1, &instanceColorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(float4), nullptr, GL_DYNAMIC_DRAW);
+
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(float4), (void*)0);
+	glVertexAttribDivisor(6, 1);
+
 	glBindVertexArray(0);
 
 }
 
 void Emitter::Render(GLuint shader) {
 
-	// Calcular la posición de la cámara
 	float3 cameraPosition = Application::GetApp()->camera->FrustumCam.pos;
 
-	// Calcular y asociar distancias
 	std::vector<std::pair<float, Particle*>> distances;
 	for (int i = 0; i < ParticleList.size(); i++) {
 		if (ParticleList[i].Active) {
@@ -147,16 +165,13 @@ void Emitter::Render(GLuint shader) {
 		}
 	}
 
-	// Ordenar las partículas según la distancia
 	std::sort(distances.begin(), distances.end(), [](const auto& lhs, const auto& rhs) {
-		return lhs.first > rhs.first; // Orden descendente para renderizar las más cercanas primero
-	});
+		return lhs.first > rhs.first;
+		});
 
-	// Usar el shader program
 	glUseProgram(shader);
 	glDepthMask(GL_FALSE);
 
-	GLuint modelLoc = glGetUniformLocation(shader, "modelMatrix");
 	GLuint viewLoc = glGetUniformLocation(shader, "viewMatrix");
 	GLuint projLoc = glGetUniformLocation(shader, "projectionMatrix");
 
@@ -168,24 +183,33 @@ void Emitter::Render(GLuint shader) {
 	glUniform1i(glGetUniformLocation(shader, "uTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "text"), text);
 
-	glBindVertexArray(vao);
+	std::vector<float4x4> instanceMatrices;
+	std::vector<float4> instanceColors;
 
 	for (const auto& pair : distances) {
 		Particle* particle = pair.second;
 
-		if (!particle->Active)
-			continue;
+		if (!particle->Active) continue;
 
 		float life = particle->LifeRemaining / particle->LifeTime;
 		float4 printColor = Lerp(particle->endColor, particle->Color, life);
+		instanceColors.push_back(printColor);
 
-
-		glUniform4f(glGetUniformLocation(shader, "printColor"), printColor.x, printColor.y, printColor.z, printColor.w);
-
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, particle->GetTransformMatrix().ptr());
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		instanceMatrices.push_back(particle->GetTransformMatrix());
 	}
+
+	glBindVertexArray(vao);
+
+	// Update instance buffer
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceMatrices.size() * sizeof(float4x4), instanceMatrices.data());
+
+	// Update instance buffer for colors
+	glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceColors.size() * sizeof(float4), instanceColors.data());
+
+	// Render instanced
+	glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, instanceMatrices.size());
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
