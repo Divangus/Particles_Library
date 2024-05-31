@@ -35,6 +35,7 @@ void Emitter::Update(float dt) {
 			ParticleList[i].speed += float3(0.0f, -9.81f, 0.0f) * dt * 0.5f;
 		}		
 		ParticleList[i].pos += ParticleList[i].speed * dt;
+
 		ParticleList[i].SetTransformMatrix();
 	}
 }
@@ -128,12 +129,18 @@ void Emitter::Render(GLuint shader) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textID);
 	glUniform1i(glGetUniformLocation(shader, "uTexture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "text"), text);
 
 	glBindVertexArray(vao);
 
 	for (int i = 0; i < ParticleList.size(); i++) {
 		if (!ParticleList[i].Active)
 			continue;
+
+		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
+		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
+		float4 printColor = Lerp(ParticleList[i].endColor, ParticleList[i].Color, life);
+		ParticleList[i].SetTransformMatrix();
 
 		switch (typeBB) {
 		case BILLBOARDTYPE::NO_ALIGN:
@@ -150,6 +157,8 @@ void Emitter::Render(GLuint shader) {
 		default:
 			break;
 		}
+
+		glUniform4f(glGetUniformLocation(shader, "printColor"), printColor.x, printColor.y, printColor.z, printColor.w);
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, ParticleList[i].GetTransformMatrix().ptr());
 
