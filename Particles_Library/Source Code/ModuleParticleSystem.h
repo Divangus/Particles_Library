@@ -35,5 +35,9 @@ public:
 	std::string textureName, defaultName;
 
 	bool particleMenu = true;
+
+	bool EmissionControl = false;
+	int ParticlesPerSecond;
+	float accumulator = 0.0f;
 };
 

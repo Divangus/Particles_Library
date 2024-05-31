@@ -49,7 +49,8 @@ struct Particle
 
 	bool Active = false;
 
-	float cameradistance;
+	int currentFrame = 0; // Current frame of the animation
+	float totalFrames = 0; // Total frames in animation
 
 	void SetTransformMatrix();
 	void SetTransformMatrixWithQuat(Quat rotation);
@@ -76,21 +77,25 @@ public:
 	void SortParticles();
 
 	bool text = false;
+	bool animatedText = false;
 
-	std::vector<Particle> ParticleList;
-	uint32_t currentParticle = MaxParticles - 1;
+	int atlasColumns = 0, atlasRows = 0;
 
 	BILLBOARDTYPE typeBB = BILLBOARDTYPE::NO_ALIGN;
 	AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
 
-	uint id_indices = 0;
-	uint id_vertices = 0;
 	uint textID = 0;
+
+private:
+
+	std::vector<Particle> ParticleList;
+	uint32_t currentParticle = MaxParticles - 1;
 
 	GLuint vao = 0;
 	GLuint vbo = 0;
 	GLuint ebo = 0;
 	GLuint instanceVBO = 0;
-	GLuint instanceColorVBO = 0;	
+	GLuint instanceColorVBO = 0;
+	GLuint instanceFrameVBO = 0;
 };
 

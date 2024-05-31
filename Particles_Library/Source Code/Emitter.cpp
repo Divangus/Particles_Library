@@ -38,8 +38,14 @@ void Emitter::Update(float dt) {
 
 		float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
 		ParticleList[i].scale = Lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
-
 		ParticleList[i].SetTransformMatrix();
+
+		if (animatedText)
+		{
+			ParticleList[i].totalFrames = atlasColumns * atlasRows;
+			// Update animation frame based on life remaining
+			ParticleList[i].currentFrame = Lerp(0, ParticleList[i].totalFrames, life);;
+		}		
 
 		switch (typeBB) {
 		case BILLBOARDTYPE::NO_ALIGN:
@@ -149,6 +155,15 @@ void Emitter::ParticleBuffer()
 	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(float4), (void*)0);
 	glVertexAttribDivisor(6, 1);
 
+	// Instance frame buffer
+	glGenBuffers(1, &instanceFrameVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceFrameVBO);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(int), nullptr, GL_DYNAMIC_DRAW);
+
+	glEnableVertexAttribArray(7);
+	glVertexAttribIPointer(7, 1, GL_INT, sizeof(int), (void*)0);
+	glVertexAttribDivisor(7, 1);
+
 	glBindVertexArray(0);
 
 }
@@ -182,9 +197,13 @@ void Emitter::Render(GLuint shader) {
 	glBindTexture(GL_TEXTURE_2D, textID);
 	glUniform1i(glGetUniformLocation(shader, "uTexture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "text"), text);
+	glUniform1i(glGetUniformLocation(shader, "animatedText"), animatedText);
+
+	glUniform2f(glGetUniformLocation(shader, "frameSize"), 1.0f / atlasColumns, 1.0f / atlasRows); // Pass frame size to shader
 
 	std::vector<float4x4> instanceMatrices;
 	std::vector<float4> instanceColors;
+	std::vector<int> instanceFrames;
 
 	for (const auto& pair : distances) {
 		Particle* particle = pair.second;
@@ -193,9 +212,10 @@ void Emitter::Render(GLuint shader) {
 
 		float life = particle->LifeRemaining / particle->LifeTime;
 		float4 printColor = Lerp(particle->endColor, particle->Color, life);
-		instanceColors.push_back(printColor);
 
+		instanceColors.push_back(printColor);
 		instanceMatrices.push_back(particle->GetTransformMatrix());
+		instanceFrames.push_back(particle->currentFrame);
 	}
 
 	glBindVertexArray(vao);
@@ -207,6 +227,10 @@ void Emitter::Render(GLuint shader) {
 	// Update instance buffer for colors
 	glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceColors.size() * sizeof(float4), instanceColors.data());
+
+	// Update instance buffer for frames
+	glBindBuffer(GL_ARRAY_BUFFER, instanceFrameVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceFrames.size() * sizeof(int), instanceFrames.data());
 
 	// Render instanced
 	glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, instanceMatrices.size());

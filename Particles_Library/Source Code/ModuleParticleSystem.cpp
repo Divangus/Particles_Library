@@ -50,7 +50,18 @@ update_status ModuleParticleSystem::Update(float dt)
 {
 	//Emit particles and update them
 
-	emitter.Emit(particleProps);
+	if (EmissionControl)
+	{
+		accumulator += dt;
+		while (accumulator > 1.0 / ParticlesPerSecond) {
+			emitter.Emit(particleProps);
+			accumulator -= 1.0 / ParticlesPerSecond;
+		}
+
+	}
+	else {
+		emitter.Emit(particleProps);
+	}
 
 	emitter.Update(dt);
 
@@ -105,6 +116,12 @@ void ModuleParticleSystem::ParticlesMenu()
 	ImGui::ColorEdit4("Color", particleProps.Color.ptr());
 	ImGui::ColorEdit4("End Color", particleProps.endColor.ptr());
 	ImGui::NewLine();
+
+	if (ImGui::CollapsingHeader("Emission: ", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Checkbox("Active", &EmissionControl);
+		ImGui::InputInt("Particles per second ", &ParticlesPerSecond);
+	}
 
 	if (ImGui::CollapsingHeader("BillBoard: ", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -172,6 +189,12 @@ void ModuleParticleSystem::ParticlesMenu()
 		ImGui::Text("Loaded Texture: ");
 		ImGui::SameLine();
 		ImGui::TextColored(ImVec4(1, 1, 0, 1), textureName.c_str());
+		ImGui::Checkbox("Animated Texture", &emitter.animatedText);
+		if(emitter.animatedText) {
+			ImGui::InputInt("Atlas Columns ", &emitter.atlasColumns);
+			ImGui::InputInt("Atlas Rows ", &emitter.atlasRows);
+		}
+
 		if (ImGui::Button("Clear Texture")) 
 		{
 			ClearTexture();
