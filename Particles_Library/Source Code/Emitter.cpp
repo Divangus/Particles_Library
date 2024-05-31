@@ -126,10 +126,8 @@ void Emitter::ParticleBuffer()
 
 void Emitter::Render() {
 
-	// Calcular la posición de la cámara
 	float3 cameraPosition = Application::GetApp()->camera->FrustumCam.pos;
 
-	// Calcular y asociar distancias
 	std::vector<std::pair<float, Particle*>> distances;
 	for (int i = 0; i < ParticleList.size(); i++) {
 		if (ParticleList[i].Active) {
@@ -138,9 +136,8 @@ void Emitter::Render() {
 		}
 	}
 
-	// Ordenar las partículas según la distancia
 	std::sort(distances.begin(), distances.end(), [](const auto& lhs, const auto& rhs) {
-		return lhs.first > rhs.first; // Orden descendente para renderizar las más cercanas primero
+		return lhs.first > rhs.first; 
 	});
 
 	//Vertices
@@ -191,7 +188,7 @@ void Emitter::Render() {
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
-
+	glDisable(GL_BLEND);
 	//cleaning texture
 	glDepthMask(GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
