@@ -41,8 +41,7 @@ void Emitter::Update(float dt) {
 
 		ParticleList[i].SetTransformMatrix();
 
-		switch (typeBB)
-		{
+		switch (typeBB) {
 		case BILLBOARDTYPE::NO_ALIGN:
 			break;
 		case BILLBOARDTYPE::SCREENALIGN:
@@ -109,25 +108,37 @@ void Emitter::ParticleBuffer()
 
 	};
 
-	//Fill buffers with vertices
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glGenBuffers(1, (GLuint*)&(id_vertices));
-	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * VERTICES, vertices, GL_STATIC_DRAW);
+	// Generar y configurar el VAO
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	//Fill buffers with indices
-	glGenBuffers(1, (GLuint*)&(id_indices));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * 5, vertices, GL_STATIC_DRAW);
+
+	//Vertex position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//texture Coords
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 6, indices, GL_STATIC_DRAW);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
+	// Desvincular VAO
+	glBindVertexArray(0);
 
 }
 
-void Emitter::Render() {
+void Emitter::Render(GLuint shader) {
 
+	// Calcular la posici�n de la c�mara
 	float3 cameraPosition = Application::GetApp()->camera->FrustumCam.pos;
 
+	// Calcular y asociar distancias
 	std::vector<std::pair<float, Particle*>> distances;
 	for (int i = 0; i < ParticleList.size(); i++) {
 		if (ParticleList[i].Active) {
@@ -136,65 +147,50 @@ void Emitter::Render() {
 		}
 	}
 
+	// Ordenar las part�culas seg�n la distancia
 	std::sort(distances.begin(), distances.end(), [](const auto& lhs, const auto& rhs) {
-		return lhs.first > rhs.first; 
+		return lhs.first > rhs.first; // Orden descendente para renderizar las m�s cercanas primero
 	});
 
-	//Vertices
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_COORD_ARRAY);
+	// Usar el shader program
+	glUseProgram(shader);
 	glDepthMask(GL_FALSE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
 
-	glVertexPointer(3, GL_FLOAT, sizeof(float) * VERTICES, NULL);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(float) * VERTICES, (void*)(sizeof(float) * 3));
-	//bind and use other buffers
+	GLuint modelLoc = glGetUniformLocation(shader, "modelMatrix");
+	GLuint viewLoc = glGetUniformLocation(shader, "viewMatrix");
+	GLuint projLoc = glGetUniformLocation(shader, "projectionMatrix");
 
-	if (text) {
-		glColor4f(1.0, 1.0, 1.0, 1.0);
-		glBindTexture(GL_TEXTURE_2D, textID);
-	}
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, Application::GetApp()->camera->GetViewMatrix());
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, Application::GetApp()->camera->GetProjectionMatrix());
 
-	//Indices
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_indices);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textID);
+	glUniform1i(glGetUniformLocation(shader, "uTexture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "text"), text);
 
-	/*for (int i = 0; i < ParticleList.size(); i++)
-	{*/
+	glBindVertexArray(vao);
+
 	for (const auto& pair : distances) {
 		Particle* particle = pair.second;
 
 		if (!particle->Active)
 			continue;
 
-		if (!text)
-		{
-			float life = particle->LifeRemaining / particle->LifeTime;
+		float life = particle->LifeRemaining / particle->LifeTime;
+		float4 printColor = Lerp(particle->endColor, particle->Color, life);
 
-			float4 printColor = Lerp(particle->endColor, particle->Color, life);
 
-			glColor4f(printColor.x, printColor.y, printColor.z, printColor.w);
-		}
+		glUniform4f(glGetUniformLocation(shader, "printColor"), printColor.x, printColor.y, printColor.z, printColor.w);
 
-		glPushMatrix();
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, particle->GetTransformMatrix().ptr());
 
-		glMultMatrixf(particle->GetTransformMatrix().ptr());
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
-
-		glPopMatrix();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisable(GL_BLEND);
-	//cleaning texture
-	glDepthMask(GL_TRUE);
+	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_TEXTURE_COORD_ARRAY);
-
+	glDepthMask(GL_TRUE);
+	glUseProgram(0);
 }
 
 void Emitter::ScreenAlignBBoard(Particle& particle)

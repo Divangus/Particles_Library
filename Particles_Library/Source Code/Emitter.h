@@ -62,7 +62,7 @@ public:
 	void Emit(ParticleProps& particleProps);
 
 	void ParticleBuffer();
-	void Render();
+	void Render(GLuint shader);
 
 	void ScreenAlignBBoard(Particle& particle);
 	void WorldAlignBBoard(Particle& particle);
@@ -80,5 +80,9 @@ public:
 	uint id_indices = 0;
 	uint id_vertices = 0;
 	uint textID = 0;
+
+	GLuint vao = 0;
+	GLuint vbo = 0;
+	GLuint ebo = 0;
 };
 

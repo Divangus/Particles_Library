@@ -145,6 +145,10 @@
     <ClInclude Include="Source Code\Random.h" />
     <ClInclude Include="Source Code\Timer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Project\ParticleFShader.glsl" />
+    <None Include="Project\ParticleVShader.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
@@ -187,7 +191,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <AdditionalLibraryDirectories>$(ProjectDir)Source Code\Externals\DevIL\libx86;$(ProjectDir)Source Code\Externals\Glew\libx86;$(ProjectDir)Source Code\Externals\SDL\libx86;$(ProjectDir)Source Code\Externals\MathGeoLib\libx86\DebugX86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;glew32s.lib;MathGeoLib.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
