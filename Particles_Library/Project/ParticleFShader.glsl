@@ -18,10 +18,16 @@ void main()
 
 		if(animatedText == true)
 		{
-			vec2 frameOffset = vec2(vInstanceFrame % int(1.0 / frameSize.x), vInstanceFrame / int(1.0 / frameSize.y)) * frameSize;
-			vec2 texCoord = vTexCoord * frameSize + frameOffset;
+			int totalColumns = int(1.0 / frameSize.x);
+            int row = vInstanceFrame / totalColumns;
+            int column = vInstanceFrame % totalColumns;
 
-			oColor = vInstanceColor * texture(uTexture, texCoord);
+            // Adjust column calculation to fix inversion by reversing the column index
+            vec2 frameOffset = vec2(totalColumns - column - 1, row) * frameSize;
+
+            // Correct texture coordinates by flipping along the x-axis
+            vec2 texCoord = vTexCoord * frameSize + frameOffset;
+            oColor = vInstanceColor * texture(uTexture, texCoord);
 		}
 		else{		
 			oColor = vInstanceColor * texture(uTexture, vTexCoord);
