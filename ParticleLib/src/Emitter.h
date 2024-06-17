@@ -52,8 +52,8 @@ struct ParticleProps
 	//If the particles are aftected by gravity or not
 	bool gravity = false;
 
-	//The LifeTime of the particles
-	float LifeTime = 1.0f;
+	//The LifeTime of the particles (default set to 10)
+	float LifeTime = 10.0f;
 };
 
 struct Particle
@@ -80,8 +80,14 @@ struct Particle
 };
 class Emitter
 {
+	friend class Particles;
+
 public:
-	Emitter();
+	Emitter(std::string name);
+	Emitter(std::string name, mat4 ViewMatrix);
+	Emitter(std::string name, ParticleProps particleProperties);
+	Emitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix);
+
 	~Emitter();
 
 	void Update(float dt);
@@ -95,23 +101,24 @@ public:
 	void WorldAlignBBoard(Particle& particle);
 	void AxisAlignBBoard(Particle& particle);
 
+	ParticleProps ParticleProperties;
+
+	BILLBOARDTYPE typeBB = BILLBOARDTYPE::SCREENALIGN;
+	AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
+
+	std::string name;
+
+private:
+
+	u32 textID = 0;
+	int MaxParticles = 10000;
+
 	bool text = false;
 	bool animatedText = false;
 
 	int atlasColumns = 0, atlasRows = 0;
 
-	ParticleProps ParticleProperties;
-
-	BILLBOARDTYPE typeBB = BILLBOARDTYPE::NO_ALIGN;
-	AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
-
-	u32 textID = 0;
-
-	int MaxParticles = 10000;
-
-private:
-
-	Camera camera = Camera();
+	Camera camera;
 
 	std::vector<Particle> ParticleList;
 	uint32_t currentParticle = MaxParticles - 1;

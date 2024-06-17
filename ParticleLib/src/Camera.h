@@ -8,6 +8,10 @@ public:
 
     Camera(vec3 cameraPos, vec3 cameraFront, vec3 cameraUp, float znear, float zfar);
 
+    Camera(mat4 viewMatrix);
+
+    void UpdateCamera(mat4 viewMatrix);
+
     void SetCameraPos(vec3 cameraPos);
 
     void SetCameraFront(vec3 cameraFront);

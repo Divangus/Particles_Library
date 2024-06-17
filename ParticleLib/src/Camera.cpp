@@ -4,7 +4,7 @@ Camera::Camera()
 {
     //camera
     cameraPos = vec3(0.0f, 0.0f, 3.0f);
-    cameraFront = vec3(0.0f, 0.0f, -1.0f);
+    cameraFront = vec3(0.0f, 0.0f, 0.0f);
     cameraUp = vec3(0.0f, 1.0f, 0.0f);
 
     znear = 0.1f;
@@ -24,6 +24,45 @@ Camera::Camera(vec3 cameraPos, vec3 cameraFront, vec3 cameraUp, float znear, flo
     this->zfar = zfar;
 
     viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+}
+
+Camera::Camera(mat4 viewMatrix)
+{
+    this->viewMatrix = viewMatrix;
+
+    // Extract the rotation part (3x3 matrix)
+    glm::mat3 rotation = glm::mat3(viewMatrix);
+
+    // Extract the translation part (last column of the 4x4 matrix)
+    glm::vec3 translation = glm::vec3(viewMatrix[3]);
+
+    // Calculate the camera position
+    cameraPos = -glm::transpose(rotation) * translation;
+
+    // Extract the front and up vectors from the rotation matrix
+    cameraFront = glm::normalize(glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
+    cameraUp = glm::normalize(glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
+
+    znear = 0.1f;
+    zfar = 1000.0f;
+}
+
+void Camera::UpdateCamera(mat4 viewMatrix)
+{
+    this->viewMatrix = viewMatrix;
+
+    // Extract the rotation part (3x3 matrix)
+    glm::mat3 rotation = glm::mat3(viewMatrix);
+
+    // Extract the translation part (last column of the 4x4 matrix)
+    glm::vec3 translation = glm::vec3(viewMatrix[3]);
+
+    // Calculate the camera position
+    cameraPos = -glm::transpose(rotation) * translation;
+
+    // Extract the front and up vectors from the rotation matrix
+    cameraFront = glm::normalize(glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]));
+    cameraUp = glm::normalize(glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
 }
 
 void Camera::SetCameraPos(vec3 cameraPos)

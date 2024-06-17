@@ -1,7 +1,48 @@
 #include "Emitter.h"
 #include "Random.h"
 
-Emitter::Emitter() {
+Emitter::Emitter(std::string name) {
+
+	this->name = name;
+
+	camera = Camera();
+
+	ParticleList.resize(MaxParticles);
+
+	currentParticle = ParticleList.size() - 1;
+}
+
+Emitter::Emitter(std::string name, mat4 ViewMatrix) {
+
+	this->name = name;
+
+	camera = Camera(ViewMatrix);
+
+	ParticleList.resize(MaxParticles);
+
+	currentParticle = ParticleList.size() - 1;
+}
+
+Emitter::Emitter(std::string name, ParticleProps particleProperties)
+{
+	this->name = name;
+
+	camera = Camera();
+
+	ParticleProperties = particleProperties;
+
+	ParticleList.resize(MaxParticles);
+
+	currentParticle = ParticleList.size() - 1;
+}
+
+Emitter::Emitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix)
+{
+	this->name = name;
+
+	camera = Camera(ViewMatrix);
+
+	ParticleProperties = particleProperties;
 
 	ParticleList.resize(MaxParticles);
 
