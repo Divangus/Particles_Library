@@ -1,23 +1,26 @@
-#pragma once
-#include "Globals.h"
+#ifndef __PARTICLELIB_H__ 
+#define __PARTICLELIB_H__ 
+
+#include "ParticleGlobals.h"
 #include "Emitter.h"
 #include "Loader.h"
-#include "Camera.h"
+#include "ParticleCamera.h"
 
 #include <ctime>
 
-class Particles
+namespace Particles
 {
-public:
 	void Init(float screen_width, float screen_height);
+
+	void CleanUp();
 
 	void CreateEmitter(std::string name);
 
-	void CreateEmitter(std::string name, mat4 ViewMatrix);
+	void CreateEmitter(std::string name, glm::mat4 ViewMatrix);
 
 	void CreateEmitter(std::string name, ParticleProps particleProperties);
 
-	void CreateEmitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix);
+	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix);
 
 	void UpdateParticles();
 
@@ -30,15 +33,15 @@ public:
 	void RemoveTexture(std::string name);
 
 	//Set the max numbers of Particles for emitter (default to 10000)
-	void setMaxParticles(int MaxParticles);
+	//void setMaxParticles(int MaxParticles);
 
 	Emitter* GetEmitter(std::string name);
 
-private:
-	vec2 displaySize;
-	std::clock_t lastTime;
-	float deltaTime;
-
-	GLuint shaderProgram;
-	std::vector<Emitter*> emittersList;
+	extern glm::vec2 p_displaySize;
+	extern std::clock_t p_lastTime;
+	extern float p_deltaTime;
+	extern GLuint p_shaderProgram;
+	extern std::vector<Emitter*> p_emittersList;
 };
+
+#endif // __PARTICLELIB_H__

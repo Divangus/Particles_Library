@@ -1,15 +1,15 @@
 #pragma once
-#include "Globals.h"
+#include "ParticleGlobals.h"
 
 namespace Loader
 {
-	GLuint Shader(const char* vertexPath, const char* fragmentPath);
+    unsigned int Shader(const char* vertexPath, const char* fragmentPath);
 
-    Image LoadImage(const char* filename);
+    ParticleImage LoadImage(const char* filename);
 
-    void FreeImage(Image image);
+    void FreeImage(ParticleImage image);
 
-    GLuint CreateTexture2DFromImage(Image image);
+    unsigned int CreateTexture2DFromImage(ParticleImage image);
 
-    u32 LoadTexture2D(const char* filepath);
+    unsigned int LoadTexture2D(const char* filepath);
 }

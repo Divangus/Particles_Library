@@ -5,7 +5,7 @@
 
 namespace Loader
 {
-	GLuint Shader(const char* vertexPath, const char* fragmentPath)
+	unsigned int Shader(const char* vertexPath, const char* fragmentPath)
 	{
 		// 1. retrieve the vertex/fragment source code from filePath
 		std::string vertexCode;
@@ -87,9 +87,9 @@ namespace Loader
 		return program;
 	}
 
-	Image LoadImage(const char* filename)
+	ParticleImage LoadImage(const char* filename)
 	{
-		Image img = {};
+		ParticleImage img = {};
 		stbi_set_flip_vertically_on_load(true);
 		img.pixels = stbi_load(filename, &img.size.x, &img.size.y, &img.nchannels, 0);
 		if (img.pixels)
@@ -103,12 +103,12 @@ namespace Loader
 		return img;
 	}
 
-	void FreeImage(Image image)
+	void FreeImage(ParticleImage image)
 	{
 		stbi_image_free(image.pixels);
 	}
 
-	GLuint CreateTexture2DFromImage(Image image)
+	unsigned int CreateTexture2DFromImage(ParticleImage image)
 	{
 		GLenum internalFormat = GL_RGB8;
 		GLenum dataFormat = GL_RGB;
@@ -136,9 +136,9 @@ namespace Loader
 		return texHandle;
 	}
 
-	GLuint LoadTexture2D(const char* filepath)
+	unsigned int LoadTexture2D(const char* filepath)
 	{
-		Image image = LoadImage(filepath);
+		ParticleImage image = LoadImage(filepath);
 
 		if (image.pixels)
 		{

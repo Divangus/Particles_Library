@@ -1,93 +1,125 @@
 #include "ParticleLib.h"
 
-void Particles::Init(float screen_width, float screen_height)
+namespace Particles
 {
-	shaderProgram = Loader::Shader("ParticleVShader.glsl", "ParticleFShader.glsl");
-	lastTime = std::clock();
-	displaySize.x = screen_width;
-	displaySize.y = screen_height;
-}
+	glm::vec2 p_displaySize;
+	std::clock_t p_lastTime;
+	float p_deltaTime;
+	GLuint p_shaderProgram;
+	std::vector<Emitter*> p_emittersList;
 
-void Particles::CreateEmitter(std::string name)
-{
-	Emitter* emitter = new Emitter(name);
-
-	emitter->ParticleBuffer();
-
-	emittersList.push_back(emitter);
-}
-
-void Particles::CreateEmitter(std::string name, mat4 ViewMatrix)
-{
-	Emitter* emitter = new Emitter(name, ViewMatrix);
-
-	emitter->ParticleBuffer();
-
-	emittersList.push_back(emitter);
-}
-
-void Particles::CreateEmitter(std::string name, ParticleProps particleProperties)
-{
-	Emitter* emitter = new Emitter(name, particleProperties);
-
-	emitter->ParticleBuffer();
-
-	emittersList.push_back(emitter);
-}
-
-void Particles::CreateEmitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix)
-{
-	Emitter* emitter = new Emitter(name, particleProperties, ViewMatrix);
-
-	emitter->ParticleBuffer();
-
-	emittersList.push_back(emitter);
-}
-
-//Update Particles
-void Particles::UpdateParticles()
-{
-	std::clock_t currentTime = std::clock();
-	deltaTime = float(currentTime - lastTime) / CLOCKS_PER_SEC;
-	lastTime = currentTime;
-
-	for (int i = 0; i < emittersList.size(); i++)
+	void Init(float screen_width, float screen_height)
 	{
-		emittersList[i]->Emit();
-		emittersList[i]->Update(deltaTime);
+		p_shaderProgram = Loader::Shader("ParticleVShader.glsl", "ParticleFShader.glsl");
+		p_lastTime = std::clock();
+		p_displaySize.x = screen_width;
+		p_displaySize.y = screen_height;
+	}
+
+	void CleanUp()
+	{
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			delete p_emittersList[i];
+		}
+		p_emittersList.clear();
+	}
+
+	void CreateEmitter(std::string name)
+	{
+		Emitter* emitter = new Emitter(name);
+
+		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
+
+		emitter->ParticleBuffer();
+
+		p_emittersList.push_back(emitter);
+	}
+
+	void CreateEmitter(std::string name, glm::mat4 ViewMatrix)
+	{
+		Emitter* emitter = new Emitter(name, ViewMatrix);
+
+		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
+
+		emitter->ParticleBuffer();
+
+		p_emittersList.push_back(emitter);
+	}
+
+	void CreateEmitter(std::string name, ParticleProps particleProperties)
+	{
+		Emitter* emitter = new Emitter(name, particleProperties);
+
+		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
+
+		emitter->ParticleBuffer();
+
+		p_emittersList.push_back(emitter);
+	}
+
+	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix)
+	{
+		Emitter* emitter = new Emitter(name, particleProperties, ViewMatrix);
+
+		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
+
+		emitter->ParticleBuffer();
+
+		p_emittersList.push_back(emitter);
+	}
+
+	//Update Particles
+	void UpdateParticles()
+	{
+		std::clock_t currentTime = std::clock();
+		p_deltaTime = float(currentTime - p_lastTime) / CLOCKS_PER_SEC;
+		p_lastTime = currentTime;
+
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			p_emittersList[i]->Emit();
+			p_emittersList[i]->Update(p_deltaTime);
+		}
+	}
+
+	//Render Particles
+	void RenderParticles()
+	{
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			p_emittersList[i]->Render(p_shaderProgram);
+		}
+	}
+
+	void AddTexture(std::string name, std::string path)
+	{
+		unsigned int texture = Loader::LoadTexture2D(path.c_str());
+		GetEmitter(name)->SetTexture(texture);
+	}
+
+	void AddAnimatedTexture(std::string name, std::string path, int atlasColumn, int atlasRows)
+	{
+		unsigned int texture = Loader::LoadTexture2D(path.c_str());
+		GetEmitter(name)->SetAnimatedTexture(texture, atlasRows, atlasColumn);
+	}
+
+	void RemoveTexture(std::string name)
+	{
+		GetEmitter(name)->CleanTexture();
+	}
+
+	Emitter* GetEmitter(std::string name)
+	{
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			if (p_emittersList[i]->name == name) return p_emittersList[i];
+		}
+
+		return nullptr;
 	}
 }
 
-//Render Particles
-void Particles::RenderParticles()
-{
-	for (int i = 0; i < emittersList.size(); i++)
-	{
-		emittersList[i]->Render(shaderProgram);
-	}
-}
-
-void Particles::AddTexture(std::string name, std::string path)
-{
-}
-
-void Particles::AddAnimatedTexture(std::string name, std::string path, int atlasColumn, int atlasRows)
-{
-}
-
-void Particles::RemoveTexture(std::string name)
-{
-}
-
-Emitter* Particles::GetEmitter(std::string name)
-{
-	for (int i = 0; i < emittersList.size(); i++) 
-	{
-		if (emittersList[i]->name == name) return emittersList[i];
-	}
-
-	return nullptr;
-}
 
 
 

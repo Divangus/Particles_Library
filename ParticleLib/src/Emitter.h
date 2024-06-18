@@ -1,6 +1,6 @@
 #pragma once
-#include "Globals.h"
-#include "Camera.h"
+#include "ParticleGlobals.h"
+#include "ParticleCamera.h"
 
 #include <algorithm>
 
@@ -22,32 +22,32 @@ enum class AXISALIGNBB
 struct ParticleProps
 {
 	//Particle initial position
-	vec3 pos = vec3(0.0f);
+	glm::vec3 pos = glm::vec3(0.0f);
 	//Particle Speed
-	vec3 speed = vec3(0.0f); 
+	glm::vec3 speed = glm::vec3(0.0f);
 	//Speed variation for each particle: set this variable to randomize a the speed of the particles so they don't follow all the same path
-	vec3 speedVariation = vec3(0.0f);
+	glm::vec3 speedVariation = glm::vec3(0.0f);
 
 	//Color of the particles
 	//To use Color over lifetime, this property has to be vec4(0.0f) (set as default);
-	vec4 Color = vec4(0.0f);
+	glm::vec4 Color = glm::vec4(0.0f);
 
 	//To use Color over lifetime, Particle Properties Color has to be vec4(0.0f, 0.0f, 0.0f, 1.0f) 
-	vec4 beginColor = vec4(1.0f);
+	glm::vec4 beginColor = glm::vec4(1.0f);
 	//To use Color over lifetime, Particle Properties Color has to be vec4(0.0f, 0.0f, 0.0f, 1.0f)
-	vec4 endColor = vec4(1.0f);
+	glm::vec4 endColor = glm::vec4(1.0f);
 
 	//Scale of the particles
 	//To use Scale over lifetime, this property has to be vec3(0.0f) (set as default);
-	vec3 Scale = vec3(0.0f);
+	glm::vec3 Scale = glm::vec3(0.0f);
 
 	//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
-	vec3 beginScale = vec3(1.0f);
+	glm::vec3 beginScale = glm::vec3(1.0f);
 	//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
-	vec3 endScale = vec3(1.0f);
+	glm::vec3 endScale = glm::vec3(1.0f);
 	//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
 	//Scale variation for each particle: set this variable to randomize a the scale of the particles so they don't have all the same size
-	vec3 scaleVariaton = vec3(0.5f);
+	glm::vec3 scaleVariaton = glm::vec3(0.5f);
 
 	//If the particles are aftected by gravity or not
 	bool gravity = false;
@@ -58,12 +58,12 @@ struct ParticleProps
 
 struct Particle
 {
-	vec3 pos, rot, scale;
-	mat4 transformMat = mat4();
-	vec3 speed;
-	vec4 Color, endColor;
+	glm::vec3 pos, rot, scale;
+	glm::mat4 transformMat = glm::mat4();
+	glm::vec3 speed;
+	glm::vec4 Color, endColor;
 
-	vec3 beginScale, endScale;
+	glm::vec3 beginScale, endScale;
 
 	float LifeTime = 1.0f, LifeRemaining = 1.0f;
 
@@ -75,18 +75,16 @@ struct Particle
 	float totalFrames = 0; // Total frames in animation
 
 	void SetTransformMatrix();
-	void SetTransformMatrixWithQuat(quat rotation);
-	mat4 GetTransformMatrix();
+	void SetTransformMatrixWithQuat(glm::quat rotation);
+	glm::mat4 GetTransformMatrix();
 };
 class Emitter
 {
-	friend class Particles;
-
 public:
 	Emitter(std::string name);
-	Emitter(std::string name, mat4 ViewMatrix);
+	Emitter(std::string name, glm::mat4 ViewMatrix);
 	Emitter(std::string name, ParticleProps particleProperties);
-	Emitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix);
+	Emitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix);
 
 	~Emitter();
 
@@ -101,6 +99,16 @@ public:
 	void WorldAlignBBoard(Particle& particle);
 	void AxisAlignBBoard(Particle& particle);
 
+	void SetTexture(unsigned int textureID);
+	void SetAnimatedTexture(unsigned int textureID, int atlasRows, int atlasColumns);
+	void CleanTexture();
+
+	void SetAspectRatio(float displaySizeX, float displaySizeY);
+
+	float lerp(float a, float b, float t);
+	glm::vec3 lerp(const glm::vec3 a, const glm::vec3 b, float t);
+	glm::vec4 lerp(const glm::vec4 a, const glm::vec4 b, float t);
+
 	ParticleProps ParticleProperties;
 
 	BILLBOARDTYPE typeBB = BILLBOARDTYPE::SCREENALIGN;
@@ -110,7 +118,7 @@ public:
 
 private:
 
-	u32 textID = 0;
+	unsigned int textID = 0;
 	int MaxParticles = 10000;
 
 	bool text = false;
@@ -118,10 +126,10 @@ private:
 
 	int atlasColumns = 0, atlasRows = 0;
 
-	Camera camera;
+	ParticleCamera camera;
 
 	std::vector<Particle> ParticleList;
-	uint32_t currentParticle = MaxParticles - 1;
+	uint32_t currentParticle;
 
 	GLuint vao = 0;
 	GLuint vbo = 0;

@@ -1,11 +1,11 @@
-#include "Camera.h"
+#include "ParticleCamera.h"
 
-Camera::Camera()
+ParticleCamera::ParticleCamera()
 {
     //camera
-    cameraPos = vec3(0.0f, 0.0f, 3.0f);
-    cameraFront = vec3(0.0f, 0.0f, 0.0f);
-    cameraUp = vec3(0.0f, 1.0f, 0.0f);
+    cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     znear = 0.1f;
     zfar = 1000.0f;
@@ -13,7 +13,7 @@ Camera::Camera()
     viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
 
-Camera::Camera(vec3 cameraPos, vec3 cameraFront, vec3 cameraUp, float znear, float zfar)
+ParticleCamera::ParticleCamera(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp, float znear, float zfar)
 {
     //camera
     this->cameraPos = cameraPos;
@@ -26,7 +26,7 @@ Camera::Camera(vec3 cameraPos, vec3 cameraFront, vec3 cameraUp, float znear, flo
     viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
 
-Camera::Camera(mat4 viewMatrix)
+ParticleCamera::ParticleCamera(glm::mat4 viewMatrix)
 {
     this->viewMatrix = viewMatrix;
 
@@ -47,7 +47,7 @@ Camera::Camera(mat4 viewMatrix)
     zfar = 1000.0f;
 }
 
-void Camera::UpdateCamera(mat4 viewMatrix)
+void ParticleCamera::UpdateCamera(glm::mat4 viewMatrix)
 {
     this->viewMatrix = viewMatrix;
 
@@ -65,53 +65,53 @@ void Camera::UpdateCamera(mat4 viewMatrix)
     cameraUp = glm::normalize(glm::vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
 }
 
-void Camera::SetCameraPos(vec3 cameraPos)
+void ParticleCamera::SetCameraPos(glm::vec3 cameraPos)
 {
     this->cameraPos = cameraPos;
 }
 
-void Camera::SetCameraFront(vec3 cameraFront)
+void ParticleCamera::SetCameraFront(glm::vec3 cameraFront)
 {
     this->cameraFront = cameraFront;
 }
 
-void Camera::SetCameraUp(vec3 cameraUp)
+void ParticleCamera::SetCameraUp(glm::vec3 cameraUp)
 {
     this->cameraUp = cameraUp;
 }
 
-void Camera::SetCameraPlanes(float nearPlane, float farPlanes)
+void ParticleCamera::SetCameraPlanes(float nearPlane, float farPlanes)
 {
     znear = nearPlane;
     zfar = farPlanes;
 }
 
-void Camera::SetAspectRatio(float displaySizeX, float displaySizeY)
+void ParticleCamera::SetAspectRatio(float displaySizeX, float displaySizeY)
 {
     aspectRatio = displaySizeX / displaySizeY;
 }
 
-mat4 Camera::GetViewMat()
+glm::mat4 ParticleCamera::GetViewMat()
 {
     viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     return viewMatrix;
 }
 
-mat4 Camera::GetProjectionMat(float displaySizeX, float displaySizeY)
+glm::mat4 ParticleCamera::GetProjectionMat(float displaySizeX, float displaySizeY)
 {
     float aspectRatio = displaySizeX / displaySizeY;
     projMatrix = glm::perspective(glm::radians(60.0f), aspectRatio, znear, zfar);
     return projMatrix;
 }
 
-mat4 Camera::GetProjectionMat(float aspectRatio)
+glm::mat4 ParticleCamera::GetProjectionMat(float aspectRatio)
 {
     projMatrix = glm::perspective(glm::radians(60.0f), aspectRatio, znear, zfar);
     return projMatrix;
 }
 
 //Set AspectRatio with the SetAspectRatio() method
-mat4 Camera::GetProjectionMat()
+glm::mat4 ParticleCamera::GetProjectionMat()
 {
     projMatrix = glm::perspective(glm::radians(60.0f), aspectRatio, znear, zfar);
     return projMatrix;

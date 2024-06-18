@@ -5,18 +5,18 @@ Emitter::Emitter(std::string name) {
 
 	this->name = name;
 
-	camera = Camera();
+	camera = ParticleCamera();
 
 	ParticleList.resize(MaxParticles);
 
 	currentParticle = ParticleList.size() - 1;
 }
 
-Emitter::Emitter(std::string name, mat4 ViewMatrix) {
+Emitter::Emitter(std::string name, glm::mat4 ViewMatrix) {
 
 	this->name = name;
 
-	camera = Camera(ViewMatrix);
+	camera = ParticleCamera(ViewMatrix);
 
 	ParticleList.resize(MaxParticles);
 
@@ -27,7 +27,7 @@ Emitter::Emitter(std::string name, ParticleProps particleProperties)
 {
 	this->name = name;
 
-	camera = Camera();
+	camera = ParticleCamera();
 
 	ParticleProperties = particleProperties;
 
@@ -36,11 +36,11 @@ Emitter::Emitter(std::string name, ParticleProps particleProperties)
 	currentParticle = ParticleList.size() - 1;
 }
 
-Emitter::Emitter(std::string name, ParticleProps particleProperties, mat4 ViewMatrix)
+Emitter::Emitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix)
 {
 	this->name = name;
 
-	camera = Camera(ViewMatrix);
+	camera = ParticleCamera(ViewMatrix);
 
 	ParticleProperties = particleProperties;
 
@@ -52,6 +52,11 @@ Emitter::Emitter(std::string name, ParticleProps particleProperties, mat4 ViewMa
 Emitter::~Emitter()
 {
 
+}
+
+void Emitter::SetAspectRatio(float displaySizeX, float displaySizeY)
+{
+	camera.SetAspectRatio(displaySizeX, displaySizeY);
 }
 
 void Emitter::Update(float dt) {
@@ -69,7 +74,7 @@ void Emitter::Update(float dt) {
 
 		ParticleList[i].LifeRemaining -= dt;
 		if (ParticleList[i].gravity) {
-			ParticleList[i].speed += vec3(0.0f, -9.81f, 0.0f) * dt * 0.5f;
+			ParticleList[i].speed += glm::vec3(0.0f, -9.81f, 0.0f) * dt * 0.5f;
 		}		
 		ParticleList[i].pos += ParticleList[i].speed * dt;
 
@@ -113,7 +118,7 @@ void Emitter::Emit()
 	particle.Active = true;
 	particle.pos = ParticleProperties.pos;
 
-	if (ParticleProperties.Scale != vec3(0.0f))
+	if (ParticleProperties.Scale != glm::vec3(0.0f))
 	{
 		particle.beginScale = ParticleProperties.Scale;
 		particle.endScale = ParticleProperties.Scale;
@@ -134,7 +139,7 @@ void Emitter::Emit()
 	particle.gravity = ParticleProperties.gravity;
 
 	// Color
-	if (ParticleProperties.Color != vec4(0.0f))
+	if (ParticleProperties.Color != glm::vec4(0.0f))
 	{
 		particle.Color = ParticleProperties.Color;
 		particle.endColor = ParticleProperties.Color;
@@ -153,7 +158,7 @@ void Emitter::Emit()
 
 void Emitter::ParticleBuffer()
 {
-	u32 indices[]
+	unsigned int indices[]
 	{
 		0, 1, 2,
 		2, 3, 0,
@@ -186,16 +191,16 @@ void Emitter::ParticleBuffer()
 
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * 6, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
 
 	// Instance buffer
 	glGenBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(mat4), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(glm::mat4), nullptr, GL_DYNAMIC_DRAW);
 
 	// Set attribute pointers for matrix (4 times vec4)
 	for (int i = 0; i < 4; i++) {
-		glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(mat4), (void*)(i * sizeof(vec4)));
+		glVertexAttribPointer(2 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(i * sizeof(glm::vec4)));
 		glEnableVertexAttribArray(2 + i);
 		glVertexAttribDivisor(2 + i, 1);
 	}
@@ -203,10 +208,10 @@ void Emitter::ParticleBuffer()
 	// Instance color buffer
 	glGenBuffers(1, &instanceColorVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
-	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(vec4), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * sizeof(glm::vec4), nullptr, GL_DYNAMIC_DRAW);
 
 	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)0);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
 	glVertexAttribDivisor(6, 1);
 
 	// Instance frame buffer
@@ -224,7 +229,7 @@ void Emitter::ParticleBuffer()
 
 void Emitter::Render(GLuint shader) {
 
-	vec3 cameraPosition = camera.cameraPos;
+	glm::vec3 cameraPosition = camera.cameraPos;
 
 	std::vector<std::pair<float, Particle*>> distances;
 	for (int i = 0; i < ParticleList.size(); i++) {
@@ -255,8 +260,8 @@ void Emitter::Render(GLuint shader) {
 
 	glUniform2f(glGetUniformLocation(shader, "frameSize"), 1.0f / atlasColumns, 1.0f / atlasRows); // Pass frame size to shader
 
-	std::vector<mat4> instanceMatrices;
-	std::vector<vec4> instanceColors;
+	std::vector<glm::mat4> instanceMatrices;
+	std::vector<glm::vec4> instanceColors;
 	std::vector<int> instanceFrames;
 
 	for (const auto& pair : distances) {
@@ -265,7 +270,7 @@ void Emitter::Render(GLuint shader) {
 		if (!particle->Active) continue;
 
 		float life = particle->LifeRemaining / particle->LifeTime;
-		vec4 printColor = lerp(particle->endColor, particle->Color, life);
+		glm::vec4 printColor = lerp(particle->endColor, particle->Color, life);
 
 		instanceColors.push_back(printColor);
 		instanceMatrices.push_back(particle->GetTransformMatrix());
@@ -276,11 +281,11 @@ void Emitter::Render(GLuint shader) {
 
 	// Update instance buffer
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceMatrices.size() * sizeof(mat4), instanceMatrices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceMatrices.size() * sizeof(glm::mat4), instanceMatrices.data());
 
 	// Update instance buffer for colors
 	glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceColors.size() * sizeof(vec4), instanceColors.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, instanceColors.size() * sizeof(glm::vec4), instanceColors.data());
 
 	// Update instance buffer for frames
 	glBindBuffer(GL_ARRAY_BUFFER, instanceFrameVBO);
@@ -298,20 +303,20 @@ void Emitter::Render(GLuint shader) {
 void Emitter::ScreenAlignBBoard(Particle& particle)
 {
 	//GET INFO ABOUT CAM AXIS
-	vec3 activecamfront = camera.cameraFront;
+	glm::vec3 activecamfront = camera.cameraFront;
 	//Vector UP is the same as the cam
-	vec3 activecamup = camera.cameraUp;
+	glm::vec3 activecamup = camera.cameraUp;
 
 	//Z-AXIS MUST BE INVERTED 
-	vec3 zAxisBB = -activecamfront;
+	glm::vec3 zAxisBB = -activecamfront;
 	//Y-AXIS KEEPS THE SAME VALUE
-	vec3 yAxisBB = activecamup;
+	glm::vec3 yAxisBB = activecamup;
 
 	//COMPUTE CROSS PRODUCT IN ORDER TO GET THE REMAINING AXIS
-	vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
+	glm::vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
 
 	//Gather the axis into a 3x3 matrix
-	mat3 rotBB(
+	glm::mat3 rotBB(
 		xAxisBB.x, xAxisBB.y, xAxisBB.z,
 		yAxisBB.x, yAxisBB.y, yAxisBB.z,
 		zAxisBB.x, zAxisBB.y, zAxisBB.z
@@ -319,67 +324,67 @@ void Emitter::ScreenAlignBBoard(Particle& particle)
 
 
 	//Apply the rotation to the particle
-	quat q = glm::quat_cast(glm::inverse(rotBB));
+	glm::quat q = glm::quat_cast(glm::inverse(rotBB));
 	particle.SetTransformMatrixWithQuat(q);
 }
 
 void Emitter::WorldAlignBBoard(Particle& particle)
 {
 	//Vector from particle to cam
-	vec3 zAxisBB = glm::normalize(camera.cameraPos - particle.pos);
+	glm::vec3 zAxisBB = glm::normalize(camera.cameraPos - particle.pos);
 
 	//Vector UP is the same as the cam
 
-	vec3 yAxisBB = camera.cameraUp;
+	glm::vec3 yAxisBB = camera.cameraUp;
 
 	//COMPUTE CROSS PRODUCT IN ORDER TO GET THE REMAINING AXIS
 
-	vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
+	glm::vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
 
 	//COMPUTE Y AXIS AGAIN IN ORDER TO BE SURE THAT THE ANGLE BETWEEN Z AND Y IS 90 degrees
 
 	yAxisBB = glm::normalize(glm::cross(zAxisBB, xAxisBB));
 
 	//Gather the axis into a 3x3 matrix
-	mat3 rotBB(
+	glm::mat3 rotBB(
 		xAxisBB.x, xAxisBB.y, xAxisBB.z,
 		yAxisBB.x, yAxisBB.y, yAxisBB.z,
 		zAxisBB.x, zAxisBB.y, zAxisBB.z
 	);
 
 	//Apply the rotation to the particle
-	quat q = glm::quat_cast(glm::inverse(rotBB));
+	glm::quat q = glm::quat_cast(glm::inverse(rotBB));
 	particle.SetTransformMatrixWithQuat(q);;
 }
 
 void Emitter::AxisAlignBBoard(Particle& particle)
 {
 	//Vector from particle to cam
-	vec3 zAxisBB = glm::normalize(camera.cameraPos - particle.pos);
+	glm::vec3 zAxisBB = glm::normalize(camera.cameraPos - particle.pos);
 
-	vec3 yAxisBB;
+	glm::vec3 yAxisBB;
 
 	//Define the arbitrary up vector (can be y-axis or any other vector)
 	switch (alignAxis) {
 	case AXISALIGNBB::X_AXIS:
-		yAxisBB = vec3(1.0f, 0.0f, 0.0f);
+		yAxisBB = glm::vec3(1.0f, 0.0f, 0.0f);
 		break;
 	case AXISALIGNBB::Y_AXIS:
-		yAxisBB = vec3(0.0f, 1.0f, 0.0f);
+		yAxisBB = glm::vec3(0.0f, 1.0f, 0.0f);
 		break;
 	case AXISALIGNBB::Z_AXIS:
-		yAxisBB = vec3(0.0f, 0.0f, 1.0f);
+		yAxisBB = glm::vec3(0.0f, 0.0f, 1.0f);
 		break;
 	default:
-		yAxisBB = vec3(0.0f, 1.0f, 0.0f);
+		yAxisBB = glm::vec3(0.0f, 1.0f, 0.0f);
 		break;
 	}
 
 	// Calculate the right vector using cross product of up and look vectors
-	vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
+	glm::vec3 xAxisBB = glm::normalize(glm::cross(yAxisBB, zAxisBB));
 
 	// Recalculate the up vector to ensure it is orthogonal
-	vec3 correctedYAxisBB = glm::normalize(glm::cross(zAxisBB, xAxisBB));
+	glm::vec3 correctedYAxisBB = glm::normalize(glm::cross(zAxisBB, xAxisBB));
 
 	// Check if the vectors are valid and not zero vectors (handle parallel case)
 	if (glm::length(xAxisBB) < 0.0001f || glm::length(correctedYAxisBB) < 0.0001f) {
@@ -399,29 +404,64 @@ void Emitter::AxisAlignBBoard(Particle& particle)
 	particle.SetTransformMatrixWithQuat(q);
 }
 
+void Emitter::SetTexture(unsigned int textureID)
+{
+	textID = textureID;
+	text = true;
+	animatedText = false;
+}
+
+void Emitter::SetAnimatedTexture(unsigned int textureID, int atlasRows, int atlasColumns)
+{
+	this->atlasRows = atlasRows;
+	this->atlasColumns = atlasColumns;
+	textID = textureID;
+	text = true;
+	animatedText = true;
+}
+
+void Emitter::CleanTexture()
+{
+	textID = 0;
+	text = false;
+	animatedText = false;
+}
+
+float Emitter::lerp(float a, float b, float t) {
+	return a + t * (b - a);
+}
+
+glm::vec3 Emitter::lerp(const glm::vec3 a, const glm::vec3 b, float t) {
+	return a + t * (b - a);
+}
+
+glm::vec4 Emitter::lerp(const glm::vec4 a, const glm::vec4 b, float t) {
+	return a + t * (b - a);
+}
+
 void Particle::SetTransformMatrix()
 {
 	float x = rot.x * DEGTORAD;
 	float y = rot.y * DEGTORAD;
 	float z = rot.z * DEGTORAD;
 
-	quat q = quat(vec3(x, y, z));
+	glm::quat q = glm::quat(glm::vec3(x, y, z));
 
 	transformMat = glm::transpose(glm::translate(glm::mat4(1.0f), pos) * glm::mat4_cast(q) * glm::scale(glm::mat4(1.0f), scale));
 }
 
-void Particle::SetTransformMatrixWithQuat(quat rotation)
+void Particle::SetTransformMatrixWithQuat(glm::quat rotation)
 {
 	float x = rot.x * DEGTORAD;
 	float y = rot.y * DEGTORAD;
 	float z = rot.z * DEGTORAD;
 
-	quat q = rotation * quat(vec3(x, y, z));
+	glm::quat q = rotation * glm::quat(glm::vec3(x, y, z));
 
 	transformMat = glm::transpose(glm::translate(glm::mat4(1.0f), pos) * glm::mat4_cast(q) * glm::scale(glm::mat4(1.0f), scale));
 }
 
-mat4 Particle::GetTransformMatrix()
+glm::mat4 Particle::GetTransformMatrix()
 {
 	return transformMat;
 }

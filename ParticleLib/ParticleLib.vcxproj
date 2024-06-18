@@ -131,16 +131,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Emitter.cpp" />
+    <ClCompile Include="src\ParticleCamera.cpp" />
     <ClCompile Include="src\ParticleLib.cpp" />
     <ClCompile Include="src\Loader.cpp" />
     <ClCompile Include="src\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Emitter.h" />
-    <ClInclude Include="src\Globals.h" />
+    <ClInclude Include="src\ParticleCamera.h" />
+    <ClInclude Include="src\ParticleGlobals.h" />
     <ClInclude Include="src\Loader.h" />
     <ClInclude Include="src\ParticleLib.h" />
     <ClInclude Include="src\Random.h" />
