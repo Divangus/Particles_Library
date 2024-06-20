@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{6db886ab-3328-482e-9810-f70fd4e8b918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\stb">
+      <UniqueIdentifier>{fc5bfeb8-98ac-48ed-a706-3983cb7a0853}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\glad">
+      <UniqueIdentifier>{fe483463-d690-4b9a-a602-683bb4b86383}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ParticleLib.cpp">
@@ -27,8 +36,11 @@
     <ClCompile Include="src\Random.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\ParticleCamera.cpp">
-      <Filter>Archivos de origen</Filter>
+    <ClCompile Include="src\ThirdParty\glad\glad.c">
+      <Filter>External\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThirdParty\stb\stb.cpp">
+      <Filter>External\stb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,8 +59,17 @@
     <ClInclude Include="src\Loader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\ParticleCamera.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="src\ThirdParty\glad\glad.h">
+      <Filter>External\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\glad\khrplatform.h">
+      <Filter>External\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\stb\stb_image.h">
+      <Filter>External\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThirdParty\stb\stb_image_write.h">
+      <Filter>External\stb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

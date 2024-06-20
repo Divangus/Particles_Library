@@ -8,12 +8,20 @@ namespace Particles
 	GLuint p_shaderProgram;
 	std::vector<Emitter*> p_emittersList;
 
-	void Init(float screen_width, float screen_height)
+	bool Init(float screen_width, float screen_height)
 	{
+		if (glGetString(GL_VERSION) == NULL) {
+
+			std::cout << "GL not initialized" << std::endl;	
+			return false;
+
+		}
 		p_shaderProgram = Loader::Shader("ParticleVShader.glsl", "ParticleFShader.glsl");
 		p_lastTime = std::clock();
 		p_displaySize.x = screen_width;
 		p_displaySize.y = screen_height;
+
+		return true;
 	}
 
 	void CleanUp()
@@ -36,9 +44,9 @@ namespace Particles
 		p_emittersList.push_back(emitter);
 	}
 
-	void CreateEmitter(std::string name, glm::mat4 ViewMatrix)
+	void CreateEmitter(std::string name, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp)
 	{
-		Emitter* emitter = new Emitter(name, ViewMatrix);
+		Emitter* emitter = new Emitter(name, cameraPos, cameraFront, cameraUp);
 
 		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
 
@@ -58,9 +66,9 @@ namespace Particles
 		p_emittersList.push_back(emitter);
 	}
 
-	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix)
+	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp)
 	{
-		Emitter* emitter = new Emitter(name, particleProperties, ViewMatrix);
+		Emitter* emitter = new Emitter(name, particleProperties, cameraPos, cameraFront, cameraUp);
 
 		emitter->SetAspectRatio(p_displaySize.x, p_displaySize.y);
 
@@ -82,6 +90,21 @@ namespace Particles
 			p_emittersList[i]->Update(p_deltaTime);
 		}
 	}
+
+	void UpdateParticles(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp)
+	{
+		std::clock_t currentTime = std::clock();
+		p_deltaTime = float(currentTime - p_lastTime) / CLOCKS_PER_SEC;
+		p_lastTime = currentTime;
+
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			p_emittersList[i]->UpdateCamera(cameraPos, cameraFront, cameraUp);
+			p_emittersList[i]->Emit();
+			p_emittersList[i]->Update(p_deltaTime);
+		}
+	}
+
 
 	//Render Particles
 	void RenderParticles()
@@ -117,6 +140,17 @@ namespace Particles
 		}
 
 		return nullptr;
+	}
+
+	void OnResize(float new_screen_width, float new_screen_height)
+	{
+		p_displaySize.x = new_screen_width;
+		p_displaySize.y = new_screen_height;
+
+		for (int i = 0; i < p_emittersList.size(); i++)
+		{
+			p_emittersList[i]->SetAspectRatio(p_displaySize.x, p_displaySize.y);
+		}
 	}
 }
 

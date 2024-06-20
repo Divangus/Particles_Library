@@ -4,25 +4,28 @@
 #include "ParticleGlobals.h"
 #include "Emitter.h"
 #include "Loader.h"
-#include "ParticleCamera.h"
 
 #include <ctime>
 
 namespace Particles
 {
-	void Init(float screen_width, float screen_height);
+	bool Init(float screen_width, float screen_height);
 
 	void CleanUp();
 
 	void CreateEmitter(std::string name);
 
-	void CreateEmitter(std::string name, glm::mat4 ViewMatrix);
+	void CreateEmitter(std::string name, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
 
 	void CreateEmitter(std::string name, ParticleProps particleProperties);
 
-	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::mat4 ViewMatrix);
+	void CreateEmitter(std::string name, ParticleProps particleProperties, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
 
 	void UpdateParticles();
+
+	void UpdateParticles(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
+
+	void OnResize(float new_screen_width, float new_screen_height);
 
 	void RenderParticles();
 

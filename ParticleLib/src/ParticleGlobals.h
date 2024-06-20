@@ -1,8 +1,13 @@
 #ifndef PARTICLE_GLOBALS
 #define PARTICLE_GLOBALS
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#if defined __glew_h__
+#include "glew.h"
+#else
+#include <glad.h>
+#endif // !__glad_h_
+
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
