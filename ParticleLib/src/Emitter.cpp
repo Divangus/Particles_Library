@@ -76,14 +76,14 @@ namespace Particles
 			ParticleList[i].pos += ParticleList[i].speed * dt;
 
 			float life = ParticleList[i].LifeRemaining / ParticleList[i].LifeTime;
-			ParticleList[i].scale = lerp(ParticleList[i].endScale, ParticleList[i].beginScale, life);
+			ParticleList[i].scale = glm::mix(ParticleList[i].endScale, ParticleList[i].beginScale, life);
 			ParticleList[i].SetTransformMatrix();
 
 			if (animatedText)
 			{
 				ParticleList[i].totalFrames = atlasColumns * atlasRows;
 				// Update animation frame based on life remaining
-				ParticleList[i].currentFrame = lerp(0, ParticleList[i].totalFrames, life);;
+				ParticleList[i].currentFrame = glm::mix(0.0f, ParticleList[i].totalFrames, life);
 			}
 
 			switch (typeBB) {
@@ -267,7 +267,7 @@ namespace Particles
 			if (!particle->Active) continue;
 
 			float life = particle->LifeRemaining / particle->LifeTime;
-			glm::vec4 printColor = lerp(particle->endColor, particle->Color, life);
+			glm::vec4 printColor = glm::mix(particle->endColor, particle->Color, life);
 
 			instanceColors.push_back(printColor);
 			instanceMatrices.push_back(particle->GetTransformMatrix());
@@ -424,18 +424,6 @@ namespace Particles
 		animatedText = false;
 	}
 
-	float Emitter::lerp(float a, float b, float t) {
-		return a + t * (b - a);
-	}
-
-	glm::vec3 Emitter::lerp(const glm::vec3 a, const glm::vec3 b, float t) {
-		return a + t * (b - a);
-	}
-
-	glm::vec4 Emitter::lerp(const glm::vec4 a, const glm::vec4 b, float t) {
-		return a + t * (b - a);
-	}
-
 	void Particle::SetTransformMatrix()
 	{
 		float x = rot.x * DEGTORAD;
@@ -444,7 +432,13 @@ namespace Particles
 
 		glm::quat q = glm::quat(glm::vec3(x, y, z));
 
-		transformMat = glm::transpose(glm::translate(glm::mat4(1.0f), pos) * glm::mat4_cast(q) * glm::scale(glm::mat4(1.0f), scale));
+		glm::mat4 transform = glm::translate(pos);
+
+		transform = transform * glm::inverse(glm::mat4_cast(q));
+
+		transform = glm::scale(transform, scale);
+
+		transformMat = transform;
 	}
 
 	void Particle::SetTransformMatrixWithQuat(glm::quat rotation)
@@ -455,7 +449,13 @@ namespace Particles
 
 		glm::quat q = rotation * glm::quat(glm::vec3(x, y, z));
 
-		transformMat = glm::transpose(glm::translate(glm::mat4(1.0f), pos) * glm::mat4_cast(q) * glm::scale(glm::mat4(1.0f), scale));
+		glm::mat4 transform = glm::translate(pos);
+
+		transform = transform * glm::inverse(glm::mat4_cast(q));
+
+		transform = glm::scale(transform, scale);
+
+		transformMat = transform;
 	}
 
 	glm::mat4 Particle::GetTransformMatrix()
@@ -527,4 +527,57 @@ namespace Particles
 	{
 		aspectRatio = displaySizeX / displaySizeY;
 	}
+
+	void ParticleProps::SetPosition(float x, float y, float z)
+	{
+		pos = glm::vec3(x, y, z);
+	}
+	void ParticleProps::SetSpeed(float x, float y, float z)
+	{
+		speed = glm::vec3(x, y, z);
+	}
+	void ParticleProps::SetSpeedVariation(float x, float y, float z)
+	{
+		speedVariation = glm::vec3(x, y, z);
+	}
+
+	void ParticleProps::SetScale(float x, float y, float z)
+	{
+		Scale = glm::vec3(x, y, z);
+	}
+	void ParticleProps::SetBeginScale(float x, float y, float z)
+	{
+		beginScale = glm::vec3(x, y, z);
+	}
+	void ParticleProps::SetEndScale(float x, float y, float z)
+	{
+		endScale = glm::vec3(x, y, z);
+	}
+	void ParticleProps::SetScaleVariation(float x, float y, float z)
+	{
+		scaleVariaton = glm::vec3(x, y, z);
+	}
+
+	void ParticleProps::SetColor(float r, float g, float b, float a)
+	{
+		Color = glm::vec4(r, g, b, a);
+	}
+	void ParticleProps::SetBeginColor(float r, float g, float b, float a)
+	{
+		beginColor = glm::vec4(r, g, b, a);
+	}
+	void ParticleProps::SetEndColor(float r, float g, float b, float a)
+	{
+		endColor = glm::vec4(r, g, b, a);
+	}
+
+	void ParticleProps::SetGravity(bool gravity)
+	{
+		this->gravity = gravity;
+	}
+	void ParticleProps::SetLifeTime(bool LifeTime)
+	{
+		this->LifeTime = LifeTime;
+	}
+
 }

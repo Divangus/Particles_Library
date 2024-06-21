@@ -2,12 +2,15 @@
 #include <cstdlib>
 #include <ctime>
 
-class Random
+namespace Particles
 {
-public:
+	class Random
+	{
+	public:
 
-	static void Init();
+		static void Init();
 
-	static float RandomFloat();
+		static float RandomFloat();
 
-};
+	};
+}

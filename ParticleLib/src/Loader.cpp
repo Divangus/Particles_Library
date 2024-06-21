@@ -3,7 +3,7 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
-namespace Loader
+namespace ParticleLoader
 {
 	unsigned int Shader(const char* vertexPath, const char* fragmentPath)
 	{

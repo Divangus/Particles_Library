@@ -4,6 +4,7 @@
 #include "ParticleGlobals.h"
 #include "Emitter.h"
 #include "Loader.h"
+#include "Random.h"
 
 #include <ctime>
 

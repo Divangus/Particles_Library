@@ -16,7 +16,7 @@ namespace Particles
 			return false;
 
 		}
-		p_shaderProgram = Loader::Shader("ParticleVShader.glsl", "ParticleFShader.glsl");
+		p_shaderProgram = ParticleLoader::Shader("ParticleVShader.glsl", "ParticleFShader.glsl");
 		p_lastTime = std::clock();
 		p_displaySize.x = screen_width;
 		p_displaySize.y = screen_height;
@@ -117,13 +117,13 @@ namespace Particles
 
 	void AddTexture(std::string name, std::string path)
 	{
-		unsigned int texture = Loader::LoadTexture2D(path.c_str());
+		unsigned int texture = ParticleLoader::LoadTexture2D(path.c_str());
 		GetEmitter(name)->SetTexture(texture);
 	}
 
 	void AddAnimatedTexture(std::string name, std::string path, int atlasColumn, int atlasRows)
 	{
-		unsigned int texture = Loader::LoadTexture2D(path.c_str());
+		unsigned int texture = ParticleLoader::LoadTexture2D(path.c_str());
 		GetEmitter(name)->SetAnimatedTexture(texture, atlasRows, atlasColumn);
 	}
 

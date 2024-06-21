@@ -46,7 +46,6 @@ namespace Particles
 		glm::vec3 beginScale = glm::vec3(1.0f);
 		//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
 		glm::vec3 endScale = glm::vec3(1.0f);
-		//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
 		//Scale variation for each particle: set this variable to randomize a the scale of the particles so they don't have all the same size
 		glm::vec3 scaleVariaton = glm::vec3(0.5f);
 
@@ -55,6 +54,36 @@ namespace Particles
 
 		//The LifeTime of the particles (default set to 10)
 		float LifeTime = 10.0f;
+
+		//Particle initial position
+		void SetPosition(float x, float y, float z);
+		//Particle Speed
+		void SetSpeed(float x, float y, float z);
+		//Speed variation for each particle: set this variable to randomize a the speed of the particles so they don't follow all the same path
+		void SetSpeedVariation(float x, float y, float z);
+
+		//Scale of the particles
+		//To use Scale over lifetime, this property has to be vec3(0.0f) (set as default);
+		void SetScale(float x, float y, float z);
+		//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
+		void SetBeginScale(float x, float y, float z);
+		//To use Scale over lifetime, Particle Properties Scale has to be vec3(0.0f)
+		void SetEndScale(float x, float y, float z);
+		//Scale variation for each particle: set this variable to randomize a the scale of the particles so they don't have all the same size
+		void SetScaleVariation(float x, float y, float z);
+
+		//Color of the particles
+		//To use Color over lifetime, this property has to be vec4(0.0f) (set as default);
+		void SetColor(float r, float g, float b, float a);
+		//To use Color over lifetime, Particle Properties Color has to be vec4(0.0f, 0.0f, 0.0f, 1.0f) 
+		void SetBeginColor(float r, float g, float b, float a);
+		//To use Color over lifetime, Particle Properties Color has to be vec4(0.0f, 0.0f, 0.0f, 1.0f) 
+		void SetEndColor(float r, float g, float b, float a);
+
+		//If the particles are aftected by gravity or not
+		void SetGravity(bool gravity);
+		//The LifeTime of the particles (default set to 10)
+		void SetLifeTime(bool LifeTime);
 	};
 
 	struct Particle
@@ -131,10 +160,6 @@ namespace Particles
 		//Camera
 		void UpdateCamera(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
 		void SetAspectRatio(float displaySizeX, float displaySizeY);
-
-		float lerp(float a, float b, float t);
-		glm::vec3 lerp(const glm::vec3 a, const glm::vec3 b, float t);
-		glm::vec4 lerp(const glm::vec4 a, const glm::vec4 b, float t);
 
 		ParticleProps ParticleProperties;
 
