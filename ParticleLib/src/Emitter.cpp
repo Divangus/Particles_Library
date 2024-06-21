@@ -90,12 +90,15 @@ namespace Particles
 			case BILLBOARDTYPE::NO_ALIGN:
 				break;
 			case BILLBOARDTYPE::SCREENALIGN:
+				ParticleList[i].rot = glm::vec3(0.0f);
 				ScreenAlignBBoard(ParticleList[i]);
 				break;
 			case BILLBOARDTYPE::WORLDALIGN:
+				ParticleList[i].rot = glm::vec3(0.0f);
 				WorldAlignBBoard(ParticleList[i]);
 				break;
 			case BILLBOARDTYPE::AXISALIGN:
+				ParticleList[i].rot = glm::vec3(0.0f);
 				AxisAlignBBoard(ParticleList[i]);
 				break;
 			default:
@@ -114,6 +117,7 @@ namespace Particles
 		Particle& particle = ParticleList[currentParticle];
 		particle.Active = true;
 		particle.pos = ParticleProperties.pos;
+		particle.rot = ParticleProperties.rot;
 
 		if (ParticleProperties.Scale != glm::vec3(0.0f))
 		{
@@ -321,7 +325,7 @@ namespace Particles
 
 
 		//Apply the rotation to the particle
-		glm::quat q = glm::quat_cast(glm::inverse(rotBB));
+		glm::quat q = glm::quat_cast(rotBB);
 		particle.SetTransformMatrixWithQuat(q);
 	}
 
@@ -350,7 +354,7 @@ namespace Particles
 		);
 
 		//Apply the rotation to the particle
-		glm::quat q = glm::quat_cast(glm::inverse(rotBB));
+		glm::quat q = glm::quat_cast(rotBB);
 		particle.SetTransformMatrixWithQuat(q);;
 	}
 
@@ -397,7 +401,7 @@ namespace Particles
 		);
 
 		//Apply the rotation to the particle
-		glm::quat q = glm::quat_cast(glm::inverse(rotBB));
+		glm::quat q = glm::quat_cast(rotBB);
 		particle.SetTransformMatrixWithQuat(q);
 	}
 
@@ -434,7 +438,7 @@ namespace Particles
 
 		glm::mat4 transform = glm::translate(pos);
 
-		transform = transform * glm::inverse(glm::mat4_cast(q));
+		transform = transform * glm::mat4_cast(q);
 
 		transform = glm::scale(transform, scale);
 
@@ -451,7 +455,7 @@ namespace Particles
 
 		glm::mat4 transform = glm::translate(pos);
 
-		transform = transform * glm::inverse(glm::mat4_cast(q));
+		transform = transform * glm::mat4_cast(q);
 
 		transform = glm::scale(transform, scale);
 
@@ -540,7 +544,10 @@ namespace Particles
 	{
 		speedVariation = glm::vec3(x, y, z);
 	}
-
+	void ParticleProps::SetRotation(float x, float y, float z)
+	{
+		rot = glm::vec3(x, y, z);
+	}
 	void ParticleProps::SetScale(float x, float y, float z)
 	{
 		Scale = glm::vec3(x, y, z);

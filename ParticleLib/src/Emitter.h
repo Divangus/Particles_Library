@@ -24,6 +24,8 @@ namespace Particles
 	{
 		//Particle initial position
 		glm::vec3 pos = glm::vec3(0.0f);
+		//Particle Rotation (only works if billboard is set to NO_ALIGN)
+		glm::vec3 rot = glm::vec3(0.0f);
 		//Particle Speed
 		glm::vec3 speed = glm::vec3(0.0f);
 		//Speed variation for each particle: set this variable to randomize a the speed of the particles so they don't follow all the same path
@@ -61,6 +63,9 @@ namespace Particles
 		void SetSpeed(float x, float y, float z);
 		//Speed variation for each particle: set this variable to randomize a the speed of the particles so they don't follow all the same path
 		void SetSpeedVariation(float x, float y, float z);
+
+		//Particle Rotation (only works if billboard is set to NO_ALIGN)
+		void SetRotation(float x, float y, float z);
 
 		//Scale of the particles
 		//To use Scale over lifetime, this property has to be vec3(0.0f) (set as default);
