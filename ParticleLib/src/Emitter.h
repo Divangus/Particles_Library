@@ -158,6 +158,8 @@ namespace Particles
 		void WorldAlignBBoard(Particle& particle);
 		void AxisAlignBBoard(Particle& particle);
 
+		void SetParticlesPerSecond(bool active, const int particlesPerSecond = 1);
+
 		void SetTexture(unsigned int textureID);
 		void SetAnimatedTexture(unsigned int textureID, int atlasRows, int atlasColumns);
 		void CleanTexture();
@@ -171,9 +173,13 @@ namespace Particles
 		BILLBOARDTYPE typeBB = BILLBOARDTYPE::SCREENALIGN;
 		AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
 
+		bool EmissionControl = false;
+		int ParticlesPerSecond = 1;
+		float accumulator = 0.0f;
+
 		std::string name;
 
-	private:
+	private:		
 
 		unsigned int textID = 0;
 		int MaxParticles = 10000;

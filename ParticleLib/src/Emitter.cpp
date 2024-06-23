@@ -405,6 +405,12 @@ namespace Particles
 		particle.SetTransformMatrixWithQuat(q);
 	}
 
+	void Emitter::SetParticlesPerSecond(bool active, const int particlesPerSecond)
+	{
+		EmissionControl = active;
+		ParticlesPerSecond = particlesPerSecond;
+	}
+
 	void Emitter::SetTexture(unsigned int textureID)
 	{
 		textID = textureID;

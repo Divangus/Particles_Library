@@ -86,7 +86,19 @@ namespace Particles
 
 		for (int i = 0; i < p_emittersList.size(); i++)
 		{
-			p_emittersList[i]->Emit();
+			if (p_emittersList[i]->EmissionControl)
+			{
+				p_emittersList[i]->accumulator += p_deltaTime;
+				while (p_emittersList[i]->accumulator > 1.0 / p_emittersList[i]->ParticlesPerSecond) {
+					p_emittersList[i]->Emit();
+					p_emittersList[i]->accumulator -= 1.0 / p_emittersList[i]->ParticlesPerSecond;
+				}
+
+			}
+			else {
+				p_emittersList[i]->Emit();
+			}
+
 			p_emittersList[i]->Update(p_deltaTime);
 		}
 	}
@@ -100,7 +112,20 @@ namespace Particles
 		for (int i = 0; i < p_emittersList.size(); i++)
 		{
 			p_emittersList[i]->UpdateCamera(cameraPos, cameraFront, cameraUp);
-			p_emittersList[i]->Emit();
+
+			if (p_emittersList[i]->EmissionControl)
+			{
+				p_emittersList[i]->accumulator += p_deltaTime;
+				while (p_emittersList[i]->accumulator > 1.0 / p_emittersList[i]->ParticlesPerSecond) {
+					p_emittersList[i]->Emit();
+					p_emittersList[i]->accumulator -= 1.0 / p_emittersList[i]->ParticlesPerSecond;
+				}
+
+			}
+			else {
+				p_emittersList[i]->Emit();
+			}
+
 			p_emittersList[i]->Update(p_deltaTime);
 		}
 	}
