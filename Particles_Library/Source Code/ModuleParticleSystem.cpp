@@ -102,6 +102,10 @@ void ModuleParticleSystem::ParticlesMenu()
 	ImGui::NewLine();
 
 	ImGui::Text("X\t\t Y\t\t Z");
+	ImGui::InputFloat3("Scale Variaton", particleProps.scaleVariaton.ptr());
+	ImGui::NewLine();
+
+	ImGui::Text("X\t\t Y\t\t Z");
 	ImGui::InputFloat3("Speed", particleProps.speed.ptr());
 	ImGui::Text("X\t\t Y\t\t Z");
 	ImGui::InputFloat3("Speed Variaton", particleProps.speedVariation.ptr());
