@@ -4,15 +4,15 @@
 #if defined __glew_h__
 #include "glew.h"
 #else
-#include <glad.h>
+#include <glad/glad.h>
 #endif // !__glad_h_
 
 
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtx/transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/quaternion.hpp>
+#include <glm/glm/gtx/quaternion.hpp>
 
 #include <iostream>
 #include <fstream>
