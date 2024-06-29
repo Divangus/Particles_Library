@@ -167,7 +167,7 @@ namespace Particles
 		return nullptr;
 	}
 
-	void SetParticlesPerSecond(std::string name, bool active, const int particlesPerSecond = 1)
+	void SetParticlesPerSecond(std::string name, bool active, int particlesPerSecond)
 	{
 		GetEmitter(name)->SetParticlesPerSecond(active, particlesPerSecond);
 	}
