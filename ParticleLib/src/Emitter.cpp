@@ -9,9 +9,7 @@ namespace Particles
 
 		camera = ParticleCamera();
 
-		ParticleList.resize(MaxParticles);
-
-		currentParticle = ParticleList.size() - 1;
+		ResizeParticleVector();
 	}
 
 	Emitter::Emitter(std::string name, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp) {
@@ -20,9 +18,7 @@ namespace Particles
 
 		camera = ParticleCamera(cameraPos, cameraFront, cameraUp);
 
-		ParticleList.resize(MaxParticles);
-
-		currentParticle = ParticleList.size() - 1;
+		ResizeParticleVector();
 	}
 
 	Emitter::Emitter(std::string name, ParticleProps particleProperties)
@@ -33,9 +29,7 @@ namespace Particles
 
 		ParticleProperties = particleProperties;
 
-		ParticleList.resize(MaxParticles);
-
-		currentParticle = ParticleList.size() - 1;
+		ResizeParticleVector();
 	}
 
 	Emitter::Emitter(std::string name, ParticleProps particleProperties, glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp)
@@ -46,14 +40,26 @@ namespace Particles
 
 		ParticleProperties = particleProperties;
 
-		ParticleList.resize(MaxParticles);
+		ResizeParticleVector();
 
-		currentParticle = ParticleList.size() - 1;
 	}
 
 	Emitter::~Emitter()
 	{
 
+	}
+
+	void Emitter::ResizeParticleVector()
+	{
+		ParticleList.resize(MaxParticles);
+
+		currentParticle = ParticleList.size() - 1;
+	}
+
+	void Emitter::SetMaxParticles(int MaxParticles)
+	{
+		this->MaxParticles = MaxParticles;
+		ResizeParticleVector();
 	}
 
 	void Emitter::Update(float dt) {
@@ -409,6 +415,16 @@ namespace Particles
 	{
 		EmissionControl = active;
 		ParticlesPerSecond = particlesPerSecond;
+	}
+
+	void Emitter::SetBillboardType(BILLBOARDTYPE typeBB)
+	{
+		this->typeBB = typeBB;
+	}
+
+	void Emitter::SetAxisBillboardType(AXISALIGNBB alignAxis)
+	{
+		this->alignAxis = alignAxis;
 	}
 
 	void Emitter::SetTexture(unsigned int textureID)

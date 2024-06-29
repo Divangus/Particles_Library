@@ -167,6 +167,26 @@ namespace Particles
 		return nullptr;
 	}
 
+	void SetParticlesPerSecond(std::string name, bool active, const int particlesPerSecond = 1)
+	{
+		GetEmitter(name)->SetParticlesPerSecond(active, particlesPerSecond);
+	}
+
+	void SetBillboard(std::string name, BILLBOARDTYPE typeBB)
+	{
+		GetEmitter(name)->SetBillboardType(typeBB);
+	}
+
+	void SetAxisBillboard(std::string name, AXISALIGNBB alignAxis)
+	{
+		GetEmitter(name)->SetAxisBillboardType(alignAxis);
+	}
+
+	void setMaxParticles(std::string name, int MaxParticles)
+	{
+		GetEmitter(name)->SetMaxParticles(MaxParticles);
+	}
+
 	void OnResize(float new_screen_width, float new_screen_height)
 	{
 		p_displaySize.x = new_screen_width;

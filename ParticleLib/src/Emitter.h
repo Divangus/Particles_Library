@@ -158,7 +158,7 @@ namespace Particles
 		void WorldAlignBBoard(Particle& particle);
 		void AxisAlignBBoard(Particle& particle);
 
-		void SetParticlesPerSecond(bool active, const int particlesPerSecond = 1);
+		void SetParticlesPerSecond(bool active, int particlesPerSecond);
 
 		void SetTexture(unsigned int textureID);
 		void SetAnimatedTexture(unsigned int textureID, int atlasRows, int atlasColumns);
@@ -168,10 +168,13 @@ namespace Particles
 		void UpdateCamera(glm::vec3 cameraPos, glm::vec3 cameraFront, glm::vec3 cameraUp);
 		void SetAspectRatio(float displaySizeX, float displaySizeY);
 
-		ParticleProps ParticleProperties;
+		void SetBillboardType(BILLBOARDTYPE typeBB);
 
-		BILLBOARDTYPE typeBB = BILLBOARDTYPE::SCREENALIGN;
-		AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
+		void SetAxisBillboardType(AXISALIGNBB alignAxis);
+
+		void SetMaxParticles(int MaxParticles);
+
+		ParticleProps ParticleProperties;
 
 		bool EmissionControl = false;
 		int ParticlesPerSecond = 1;
@@ -179,7 +182,12 @@ namespace Particles
 
 		std::string name;
 
-	private:		
+	private:
+
+		BILLBOARDTYPE typeBB = BILLBOARDTYPE::SCREENALIGN;
+		AXISALIGNBB alignAxis = AXISALIGNBB::Y_AXIS;
+
+		void ResizeParticleVector();
 
 		unsigned int textID = 0;
 		int MaxParticles = 10000;

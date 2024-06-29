@@ -36,8 +36,16 @@ namespace Particles
 
 	void RemoveTexture(std::string name);
 
+	void SetParticlesPerSecond(std::string name, bool active, const int particlesPerSecond = 1);
+
+	void SetBillboard(std::string name, BILLBOARDTYPE typeBB);
+
+	//Change the Axis wich the particles are Alligned
+	//Note that if the Billboard type isn't set to Axis, no change will be noticeable.
+	void SetAxisBillboard(std::string name, AXISALIGNBB alignAxis);
+
 	//Set the max numbers of Particles for emitter (default to 10000)
-	//void setMaxParticles(int MaxParticles);
+	void setMaxParticles(std::string name, int MaxParticles);
 
 	Emitter* GetEmitter(std::string name);
 
