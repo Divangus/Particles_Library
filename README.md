@@ -5,9 +5,9 @@
 1. [Introduction](#introduction)
 2. [Video Trailer](#video-trailer)
 3. [Utilities](#utilities)
-   1. [Editable Particles](#editable-particles)
-   2. [Time-based Scale and Color](#time-based-scale-and-color)
-   3. [Customizable Emission Rate](#customizable-emission-rate)
+   - [Editable Particles](#editable-particles)
+   - [Time-based Scale and Color](#time-based-scale-and-color)
+   - [Customizable Emission Rate](#customizable-emission-rate)
    - [Three Types of Billboard](#three-types-of-billboard)
    - [Texture and Animated Texture](#texture-and-animated-texture)
    - [Instanced Rendering](#instanced-rendering)
@@ -32,32 +32,32 @@ This library has been developed as a Bachelor´s Degree Final Project.
 *(Click the image to watch the video trailer)*
 
 ## Utilities
-1. **Editable Particles**
+### 1. Editable Particles
    - Allows customization of particle attributes such as velocity, color, scale, and lifetime.
      
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/d6b6f58b-7228-4e30-a06e-76c00178043f" width="640" height="360">
 
-2. **Time-based Scale and Color**
+### 2. Time-based Scale and Color
    - Enables scaling and color variation over the lifetime of particles.
 
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/a3de66df-15a7-40db-9974-dc579b14c999" width="640" height="360">
 
-3. **Customizable Emission Rate**
+### 3. Customizable Emission Rate
    - Control the emission rate to emit particles at a desired rate per second.
      
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/d3438a03-c191-4a37-8b16-338e8dae7dbf" width="640" height="360">
 
-4. **Three Types of Billboard**
+### 4. Three Types of Billboard
    - Supports three types of billboarding: screen-aligned, world-aligned, and axis-aligned.
      
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/479875b8-8de2-46c1-b6bb-e6ce1529fe4f" width="640" height="360">
 
-5. **Texture and Animated Texture**
+### 5. Texture and Animated Texture
    - Incorporates static textures and supports animated textures for dynamic particle effects.
      
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/9c299352-cc42-41af-bd2a-70011098ba64" width="640" height="360">
 
-6. **Instanced Rendering**
+### 6. Instanced Rendering
    - Utilizes instanced rendering for efficient drawing of large numbers of particles.
      
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/c50acd25-528e-4fd3-a1b1-65ebaf2aa172" width="640" height="360">
