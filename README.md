@@ -67,6 +67,8 @@ This library has been developed as a Bachelor´s Degree Final Project.
   
 - Copy the Files of ParticleLib to your project.
   
+- Move the `ParticleVShader.glsl` and `ParticleFShader.glsl` to the WorkingDir of the project.
+  
 - Once in Visual Studio, open the project properties.
   
 - Navigate to C/C++ -> General, and add the directory of the include folder and include/ThirdParty to Additional Include Directories.
