@@ -63,7 +63,7 @@ This library has been developed as a Bachelor´s Degree Final Project.
      <img src="https://github.com/Divangus/Particles_Library/assets/79161120/c50acd25-528e-4fd3-a1b1-65ebaf2aa172" width="640" height="360">
 
 ## Download and Implementation Instructions on Visual Studio
-- Download the Library from the [Release](linkALaReleaseFReak) of this project and unzip the file. You can also find an executable containing a demo to showcase the capabilities of the library.
+- Download the Library from the [Release](https://github.com/Divangus/Particles_Library/releases/tag/ParticleLib) of this project and unzip the file. You can also find an executable containing a demo to showcase the capabilities of the library.
   
 - Copy the Files of ParticleLib to your project.
   
@@ -148,4 +148,4 @@ This library has been developed as a Bachelor´s Degree Final Project.
 - [SDL](https://www.libsdl.org/): Simple DirectMedia Layer, a cross-platform development library.
 - [ImGUI](https://github.com/ocornut/imgui): Immediate Mode Graphical User Interface for C++.
 
- *Happy coding with ParticleLib!*
+ ***Happy coding with ParticleLib!***
