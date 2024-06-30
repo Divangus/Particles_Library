@@ -126,13 +126,13 @@ This library has been developed as a Bachelor´s Degree Final Project.
 | `void SetSpeed(float x, float y, float z)`                          | Sets the particle's speed.                                                                    |
 | `void SetSpeedVariation(float x, float y, float z)`                 | Sets the speed variation to randomize the speed of the particles.                             |
 | `void SetRotation(float x, float y, float z)`                       | Sets the particle's rotation (only works if billboard is set to NO_ALIGN).                    |
-| `void SetScale(float x, float y, float z)`                          | Sets the particle's scale. To use scale over lifetime, this should be `glm::vec3(0.0f)`.      |
-| `void SetBeginScale(float x, float y, float z)`                     | Sets the initial scale for scale over lifetime. Requires `Scale` to be `glm::vec3(0.0f)`.     |
-| `void SetEndScale(float x, float y, float z)`                       | Sets the final scale for scale over lifetime. Requires `Scale` to be `glm::vec3(0.0f)`.       |
+| `void SetScale(float x, float y, float z)`                          | Sets the particle's scale. To use scale over lifetime, this should be `(0, 0, 0)`.      |
+| `void SetBeginScale(float x, float y, float z)`                     | Sets the initial scale for scale over lifetime. Requires `Scale` to be `(0, 0, 0)`.     |
+| `void SetEndScale(float x, float y, float z)`                       | Sets the final scale for scale over lifetime. Requires `Scale` to be `(0, 0, 0)`.       |
 | `void SetScaleVariation(float x, float y, float z)`                 | Sets the scale variation to randomize the size of the particles.                              |
-| `void SetColor(float r, float g, float b, float a)`                 | Sets the particle's color. To use color over lifetime, this should be `glm::vec4(0.0f)`.      |
-| `void SetBeginColor(float r, float g, float b, float a)`            | Sets the initial color for color over lifetime. Requires `Color` to be `glm::vec4(0.0f)`. |
-| `void SetEndColor(float r, float g, float b, float a)`              | Sets the final color for color over lifetime. Requires `Color` to be `glm::vec4(0.0f)`. |
+| `void SetColor(float r, float g, float b, float a)`                 | Sets the particle's color. To use color over lifetime, this should be `(0, 0, 0)`.      |
+| `void SetBeginColor(float r, float g, float b, float a)`            | Sets the initial color for color over lifetime. Requires `Color` to be `(0, 0, 0)`. |
+| `void SetEndColor(float r, float g, float b, float a)`              | Sets the final color for color over lifetime. Requires `Color` to be `(0, 0, 0)`. |
 | `void SetGravity(bool gravity)`                                     | Sets whether particles are affected by gravity.                                               |
 | `void SetLifeTime(bool LifeTime)`                                   | Sets the lifetime of the particles.                                                           |
 
