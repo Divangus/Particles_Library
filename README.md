@@ -74,6 +74,7 @@ This library has been developed as a Bachelor´s Degree Final Project.
 - Navigate to C/C++ -> General, and add the directory of the include folder and include/ThirdParty to Additional Include Directories.
   
 - Go to Linker -> General and add the path where the ParticleLib.Lib file is located to Additional Library Directories, depending on your version of Visual Studio and your Runtime Library (MT/MTd or MD/MDd).
+   - To know what Runtime Library are you using in your program go to C/C++ -> Code Generation. 
   
 - Go to Linker -> Input and add "ParticleLib.lib" (without the quotes) to Additional Dependencies.
   
