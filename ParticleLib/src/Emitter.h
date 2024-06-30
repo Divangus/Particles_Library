@@ -88,7 +88,7 @@ namespace Particles
 		//If the particles are aftected by gravity or not
 		void SetGravity(bool gravity);
 		//The LifeTime of the particles (default set to 10)
-		void SetLifeTime(bool LifeTime);
+		void SetLifeTime(float LifeTime);
 	};
 
 	struct Particle

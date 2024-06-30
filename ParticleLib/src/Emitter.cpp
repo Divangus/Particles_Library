@@ -604,7 +604,7 @@ namespace Particles
 	{
 		this->gravity = gravity;
 	}
-	void ParticleProps::SetLifeTime(bool LifeTime)
+	void ParticleProps::SetLifeTime(float LifeTime)
 	{
 		this->LifeTime = LifeTime;
 	}
