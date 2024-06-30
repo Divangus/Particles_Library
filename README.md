@@ -28,7 +28,7 @@ This library has been developed as a Bachelor´s Degree Final Project.
 ![Particle Overview](https://github.com/Divangus/Particles_Library/assets/79161120/be614753-3af3-45ce-800d-5d63b56e7f22)
 
 ## Video Trailer
-[![ParticleLib Video Trailer Coming Soon](path_to_video_thumbnail.png)](path_to_video.mp4)
+[![Snipaste_2024-06-30_17-57-04](https://github.com/Divangus/Particles_Library/assets/79161120/09afd75e-0e41-4465-a6db-09b5abc8f92c)](https://youtu.be/McEw10Ydcrk)
 *(Click the image to watch the video trailer)*
 
 ## Utilities
